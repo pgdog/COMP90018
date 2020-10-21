@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottom_nav_message_item"
+        android:icon="@drawable/ic_chat"
+        android:title="Message" />
+    <item
+        android:id="@+id/bottom_nav_friends_item"
+        android:icon="@drawable/ic_friends"
+        android:title="Friends" />
+    <item
+        android:id="@+id/bottom_nav_nearby_item"
+        android:icon="@drawable/ic_map"
+        android:title="Nearby" />
+
+    <item
+        android:id="@+id/bottom_nav_me_item"
+        android:icon="@drawable/ic_person"
+        android:title="Me" />
+
+</menu>
