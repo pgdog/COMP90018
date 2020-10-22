@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.example.comp90018.R;
 import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.MessageItem;
+import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class MessageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Initialize data
+        initData();
     }
 
     @Override
@@ -50,8 +53,7 @@ public class MessageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view=inflater.inflate(R.layout.fragment_message, container, false);
-        //Initialize data
-        initData();
+
         //Initialize view
         initView();
 
@@ -70,7 +72,7 @@ public class MessageFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         MessageListAdapter messageListAdapter=new MessageListAdapter(messageItems);
         recyclerView.setAdapter(messageListAdapter);
-        messageListAdapter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
+        messageListAdapter.setOnItemClickListener(new OnRecycleItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 //Go to chat activity

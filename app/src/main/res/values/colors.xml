@@ -8,4 +8,5 @@
     <color name="colorBottomNavIconUnchecked">#605353</color>
     <color name="colorLightGrey">#ECECEC</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorLightGreen">#edf9f9</color>
 </resources>

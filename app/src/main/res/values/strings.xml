@@ -1,4 +1,7 @@
 <resources>
+    <string name="nearby_title">Nearby</string>
+    <string name="me_title">Me</string>
+    <string name="friends_title">Friends</string>
     <string name="description_image_user">The profile picture of the user</string>
     <string name="message_title">Message</string>
     <string name="app_name">COMP90018</string>
