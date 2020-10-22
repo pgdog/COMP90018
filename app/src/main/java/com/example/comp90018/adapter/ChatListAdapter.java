@@ -77,7 +77,7 @@ public class ChatListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         //Bind the data
-        if(position<chatItems.size() && chatItems.size()>1){
+        if(position<chatItems.size()){
             ChatItem item=chatItems.get(position);
             ViewHolder myHolder=(ViewHolder)holder;
             myHolder.imageAvatar.setImageBitmap(item.getImage());

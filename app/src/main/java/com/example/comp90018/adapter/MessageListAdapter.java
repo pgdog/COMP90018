@@ -1,5 +1,6 @@
 package com.example.comp90018.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.R;
+import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 
 import java.util.ArrayList;
@@ -20,8 +22,8 @@ import java.util.List;
 public class MessageListAdapter extends RecyclerView.Adapter implements RecycleItemTouchHelper.ItemTouchHelperCallback {
     // The data of the list
     private List<MessageItem> messageItems=new ArrayList<MessageItem>();
-    // Click event
-    private MessageListAdapter.OnItemClickListener onItemClickListener;
+    // Click event listener
+    private OnRecycleItemClickListener onItemClickListener;
 
     public static final int VIEW_HOLEDER_TYPE_SPACE=0;
     public static final int VIEW_HOLEDER_TYPE_NORMAL=1;
@@ -59,14 +61,8 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
             space=view.findViewById(R.id.item_space);
         }
     }
-
-    //Interface for the click event
-    public interface OnItemClickListener{
-        void onItemClick(View view,int position);
-    }
-
     //The method used to set a listener
-    public void setOnItemClickListener(MessageListAdapter.OnItemClickListener onItemClickListener){
+    public void setOnItemClickListener(OnRecycleItemClickListener onItemClickListener){
         this.onItemClickListener=onItemClickListener;
     }
 
@@ -92,7 +88,7 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         //Bind the data
-        if(position<messageItems.size() && messageItems.size()>1) {
+        if(position<messageItems.size()) {
             MessageItem item = messageItems.get(position);
             ViewHolder myHolder = (ViewHolder) holder;
             myHolder.imageAvatar.setImageBitmap(item.getImage());

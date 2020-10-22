@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -9,43 +10,51 @@
         android:id="@+id/item_message_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/description_image_user"
         android:background="@color/colorBottomNavBack"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/description_image_user"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="15dp"></ImageView>
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/item_message_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="15dp">
+        android:layout_marginBottom="11dp"
+        android:gravity="center"
+        android:text="friend's name"
+        app:layout_constraintBottom_toTopOf="@+id/item_message_content"
+        app:layout_constraintStart_toEndOf="@+id/item_message_image"
+        app:layout_constraintTop_toTopOf="@+id/item_message_image"
+        android:layout_marginLeft="15dp"
+        android:textSize="25dp">
 
-        <TextView
-            android:id="@+id/item_message_name"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:text="friend's name"
-            android:gravity="center">
+    </TextView>
 
-        </TextView>
+    <TextView
+        android:id="@+id/item_message_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="latest chat content"
+        app:layout_constraintStart_toEndOf="@+id/item_message_image"
+        app:layout_constraintTop_toBottomOf="@id/item_message_name"
+        android:layout_marginLeft="15dp">
 
-        <TextView
-            android:id="@+id/item_message_content"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:text="latest chat content"
-            android:gravity="center">
+    </TextView>
 
-        </TextView>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorBottomNavBack"
-            android:layout_marginTop="15dp">
-        </TextView>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/colorBottomNavBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_message_image"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="90dp"></TextView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

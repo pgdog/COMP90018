@@ -1,66 +1,94 @@
 package com.example.comp90018.ui;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.comp90018.R;
+import com.example.comp90018.adapter.MeListAdapter;
+import com.example.comp90018.adapter.MessageListAdapter;
+import com.example.comp90018.dataBean.MeItem;
+import com.example.comp90018.utils.OnRecycleItemClickListener;
+import com.example.comp90018.utils.RecycleItemTouchHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class MeFragment extends Fragment {
+    //The view of this fragment
+    private View view;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    //Views
+    private TextView titleText;
+    private ImageView imageView;
+    private TextView nameText;
+    private RecyclerView recyclerView;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    //List of the item
+    private List<MeItem> meItems;
     public MeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MeFragment newInstance(String param1, String param2) {
-        MeFragment fragment = new MeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        //Initialize data
+        initData();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_me, container, false);
+        view= inflater.inflate(R.layout.fragment_me, container, false);
+
+        //Initialize view
+        initView();
+        return view;
+    }
+
+    public void initData(){
+        //Get all data here
+        meItems=new ArrayList<MeItem>();
+        testData();
+    }
+
+    public void initView(){
+        //Create views here
+        titleText=(TextView)view.findViewById(R.id.me_title_text);
+        imageView=(ImageView)view.findViewById(R.id.me_image);
+        nameText=(TextView)view.findViewById(R.id.me_name);
+
+        Bitmap testPic= BitmapFactory.decodeResource(this.getContext().getResources(),R.drawable.test_image);
+        imageView.setImageBitmap(testPic);
+        recyclerView=(RecyclerView)view.findViewById(R.id.me_recycler_view);
+        LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        MeListAdapter meListAdapter=new MeListAdapter(meItems);
+        recyclerView.setAdapter(meListAdapter);
+        meListAdapter.setOnItemClickListener(new OnRecycleItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+        });
+    }
+
+    public void testData(){
+        meItems.add(new MeItem(R.drawable.ic_setting,"Settings",MeItem.ITEM_TYPE_SETTING));
     }
 }
