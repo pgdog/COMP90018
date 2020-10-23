@@ -75,7 +75,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                         view.setBackground(getDrawable(R.drawable.shape_border));
                         break;
                 }
-                return true;
+                return false;
             }
         });
     }
