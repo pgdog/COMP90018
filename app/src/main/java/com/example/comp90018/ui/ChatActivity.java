@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,14 +15,15 @@ import android.widget.TextView;
 import com.example.comp90018.R;
 import com.example.comp90018.adapter.ChatListAdapter;
 import com.example.comp90018.dataBean.ChatItem;
+import com.example.comp90018.dataBean.MessageItem;
+import com.example.comp90018.utils.DataManager;
+import com.example.comp90018.utils.TestData;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
-    //The list of chat data
-    private List<ChatItem> chatItems=new ArrayList<ChatItem>();
-
     //Views
     private TextView titleText;
     private Button backBtn;
@@ -50,7 +52,9 @@ public class ChatActivity extends AppCompatActivity {
 
     public void initData(){
         //Get all data here
-        testData();
+        int friendID=getIntent().getIntExtra(MainViewActivity.VALUES_FRIEND_ID,0);
+        DataManager.getDataManager(this).createItemsForChat(friendID);
+        DataManager.getDataManager(this).setMessageRead(friendID);
     }
 
     public void initView(){
@@ -61,23 +65,17 @@ public class ChatActivity extends AppCompatActivity {
         inputText=findViewById(R.id.chat_edit_text);
         addBtn=findViewById(R.id.chat_add_btn);
 
-        ChatListAdapter chatListAdapter=new ChatListAdapter(chatItems);
+        ChatListAdapter chatListAdapter=new ChatListAdapter(DataManager.getDataManager(this).getChatItems());
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.scrollToPosition(chatListAdapter.getItemCount()-1);
-    }
 
-    public void testData(){
-        Bitmap testPic= BitmapFactory.decodeResource(getResources(),R.drawable.test_image);
-        chatItems.add(new ChatItem(testPic,"text from me 546s5d46f5sd4f564655464564564sdfsdafsfs",true));
-        chatItems.add(new ChatItem(testPic,"text from me",true));
-        chatItems.add(new ChatItem(testPic,"text from others sadfaadz1321321gfafadsfa12313123sdfadf23",false));
-        chatItems.add(new ChatItem(testPic,"text from me",true));
-        chatItems.add(new ChatItem(testPic,"text from others",false));
-        chatItems.add(new ChatItem(testPic,"text from others",false));
-        chatItems.add(new ChatItem(testPic,"text from me",true));
-        chatItems.add(new ChatItem(testPic,"text from others",false));
-        chatItems.add(new ChatItem(testPic,"text from me",true));
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 }

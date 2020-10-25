@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.FriendItem;
+import com.example.comp90018.dataBean.FriendProfile;
+import com.example.comp90018.utils.DataManager;
 
 public class FriendProfileActivity extends AppCompatActivity {
     //Views
@@ -24,7 +26,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private LinearLayout sendMessageView;
 
     //data
-    private FriendItem friendItem;
+    private FriendProfile friendProfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,11 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     public void initData(){
-        testData();
+        Intent intent=getIntent();
+        int friendID=intent.getIntExtra(MainViewActivity.VALUES_FRIEND_ID,0);
+        if(friendID!=0){
+            friendProfile=DataManager.getDataManager(this).getFriendProfile(friendID);
+        }
     }
 
     public void initView(){
@@ -53,13 +59,21 @@ public class FriendProfileActivity extends AppCompatActivity {
         nameText=(TextView)findViewById(R.id.friend_profile_name_text);
         sendMessageView=(LinearLayout)findViewById(R.id.friend_profile_chat);
 
-        imageView.setImageBitmap(this.friendItem.getImage());
-        nameText.setText(this.friendItem.getName());
+        imageView.setImageBitmap(this.friendProfile.getImage());
+        nameText.setText(this.friendProfile.getName());
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         sendMessageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(),ChatActivity.class);
+                intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,friendProfile.getID());
                 startActivity(intent);
             }
         });
@@ -78,10 +92,5 @@ public class FriendProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
-
-    public void testData(){
-        Bitmap testPic= BitmapFactory.decodeResource(getResources(),R.drawable.test_image);
-        this.friendItem=new FriendItem(testPic,"Friend's Nicname");
     }
 }

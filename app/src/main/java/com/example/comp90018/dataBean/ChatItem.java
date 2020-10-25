@@ -2,15 +2,27 @@ package com.example.comp90018.dataBean;
 
 import android.graphics.Bitmap;
 
-public class ChatItem {
-    private Bitmap image;
-    private String text;
-    private boolean isSelf;
+import java.util.Date;
 
-    public ChatItem(Bitmap image, String text, boolean isSelf){
+/**
+ * The item of message record list
+ */
+public class ChatItem {
+    //The image of a user
+    private Bitmap image;
+    //A message record text
+    private String text;
+    //Whether this message is from the user himself,
+    //if so, the view will use different structure
+    private boolean isSelf;
+    //The date of a message record, used for sort
+    private Date date;
+
+    public ChatItem(Bitmap image, String text, boolean isSelf,Date date){
         this.image=image;
         this.text=text;
         this.isSelf=isSelf;
+        this.date=date;
     }
 
     public Bitmap getImage(){
@@ -22,4 +34,5 @@ public class ChatItem {
     public boolean isSelf(){
         return this.isSelf;
     }
+    public Date getDate(){return this.date;}
 }
