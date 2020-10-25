@@ -22,6 +22,7 @@ import com.example.comp90018.R;
 import com.example.comp90018.adapter.FriendListAdapter;
 import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.FriendItem;
+import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 
@@ -33,10 +34,6 @@ import java.util.List;
 public class FriendsFragment extends Fragment {
     //The layout of this fragment
     View view;
-
-    //The list of friends data
-    private List<FriendItem> friendItems;
-
     //Views
     private TextView titleText;
     private Button addFriendBtn;
@@ -45,6 +42,7 @@ public class FriendsFragment extends Fragment {
     private TextView indexCenterText;
 
     private FriendListAdapter friendListAdapter;
+
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -71,8 +69,7 @@ public class FriendsFragment extends Fragment {
     }
 
     public void initData(){
-        friendItems = new ArrayList<FriendItem>();
-        testData();
+        DataManager.getDataManager(getActivity()).createItemsForFriends();
     }
 
     public void initView(){
@@ -85,13 +82,14 @@ public class FriendsFragment extends Fragment {
 
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        friendListAdapter=new FriendListAdapter(friendItems);
+        friendListAdapter=new FriendListAdapter(DataManager.getDataManager(getActivity()).getFriendItems());
         recyclerView.setAdapter(friendListAdapter);
         friendListAdapter.setOnItemClickListener(new OnRecycleItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent=new Intent(getActivity().getApplicationContext(),FriendProfileActivity.class);
                 FriendItem item=friendListAdapter.getFriendListItem().get(position);
+                intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,item.getID());
                 startActivity(intent);
             }
         });
@@ -120,22 +118,5 @@ public class FriendsFragment extends Fragment {
         });
 
         indexCenterText.setVisibility(View.GONE);
-    }
-
-    public void testData(){
-        Bitmap testPic= BitmapFactory.decodeResource(this.getContext().getResources(),R.drawable.test_image);
-        friendItems.add(new FriendItem(testPic,"Alice"));
-        friendItems.add(new FriendItem(testPic,"Bob"));
-        friendItems.add(new FriendItem(testPic,"Tom"));
-        friendItems.add(new FriendItem(testPic,"Jack"));
-        friendItems.add(new FriendItem(testPic,"Cathy"));
-        friendItems.add(new FriendItem(testPic,"Mark"));
-        friendItems.add(new FriendItem(testPic,"Henry"));
-        friendItems.add(new FriendItem(testPic,"Gary"));
-        friendItems.add(new FriendItem(testPic,"Martin"));
-        friendItems.add(new FriendItem(testPic,"James"));
-        friendItems.add(new FriendItem(testPic,"152675"));
-        friendItems.add(new FriendItem(testPic,"+0152675"));
-        friendItems.add(new FriendItem(testPic,"#152675"));
     }
 }

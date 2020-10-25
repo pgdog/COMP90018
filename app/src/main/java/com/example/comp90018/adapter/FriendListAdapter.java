@@ -64,7 +64,7 @@ public class FriendListAdapter extends RecyclerView.Adapter {
     public FriendListAdapter(List<FriendItem> friendItems){
         this.friendItems=friendItems;
         for(String index:SideIndexBar.indexs){
-            friendItems.add(new FriendItem(null,index,VIEW_HOLEDER_TYPE_INDEX));
+            friendItems.add(new FriendItem(-1,null,index,VIEW_HOLEDER_TYPE_INDEX));
         }
         itemSort();
     }
