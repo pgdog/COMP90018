@@ -1,0 +1,15 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Color of the background -->
+    <solid android:color="@color/colorBottomNavBack" />
+
+    <!-- Color and size of the border  -->
+    <stroke
+        android:width="0dp"
+        />
+
+    <size android:height="50dp"
+        android:width="50dp"></size>
+
+</shape>
