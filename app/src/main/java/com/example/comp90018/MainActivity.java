@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.comp90018.ui.MainViewActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.i("Login result", "signInWithEmail:success");
-                            Intent intent = new Intent(getApplicationContext(), HomePageActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), MainViewActivity.class);
                             startActivity(intent);
                             finish();
                         } else {

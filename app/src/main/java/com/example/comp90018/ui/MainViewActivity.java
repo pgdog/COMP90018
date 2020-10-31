@@ -6,12 +6,17 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.comp90018.MainActivity;
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.User;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.TestData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,9 +36,23 @@ public class MainViewActivity extends AppCompatActivity {
     //Some static value for transfer values between activitys
     public static final String VALUES_FRIEND_ID="FriendID";
 
+    private FirebaseAuth mAuth;
+    FirebaseUser user;
+
    @Override
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
+       //get current user, if user not logged in, go to login activity
+       mAuth = FirebaseAuth.getInstance();
+       user = mAuth.getCurrentUser();
+       if(user == null){
+           Intent intent = new Intent(this, MainActivity.class);
+           startActivity(intent);
+           finish();
+       }else{
+           Toast.makeText(getApplicationContext(), "user email is "+user.getEmail(),
+                   Toast.LENGTH_LONG).show();
+       }
 
        //Cancel the title
        if (getSupportActionBar() != null)
@@ -109,4 +128,5 @@ public class MainViewActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
     }
+
 }

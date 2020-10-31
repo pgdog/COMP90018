@@ -8,6 +8,7 @@ public class MeItem {
     private int itemType;
 
     public static final int ITEM_TYPE_SETTING=1;
+    public static final int ITEM_TYPE_LOGOUT=2;
 
     public MeItem(int icImage,String itemName,int itemType){
         this.icImage=icImage;

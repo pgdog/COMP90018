@@ -5,23 +5,36 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.renderscript.Sampler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.comp90018.MainActivity;
 import com.example.comp90018.R;
 import com.example.comp90018.adapter.MeListAdapter;
 import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.MeItem;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +51,12 @@ public class MeFragment extends Fragment {
 
     //List of the item
     private List<MeItem> meItems;
+
+    private FirebaseAuth mAuth;
+    FirebaseUser user;
+    private DatabaseReference mDatabaseRef;
+    private String photoLink;
+
     public MeFragment() {
         // Required empty public constructor
     }
@@ -46,6 +65,22 @@ public class MeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        photoLink = (String)snapshot.child("photo").getValue();
+                        Picasso.get().load(photoLink).into(imageView);
+                        Log.i("Login result", "data is " + photoLink);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         //Initialize data
         initData();
     }
@@ -83,12 +118,20 @@ public class MeFragment extends Fragment {
         meListAdapter.setOnItemClickListener(new OnRecycleItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                if(position == 1){
+                    mAuth.signOut();
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }else if(position == 0){
 
+                }
             }
         });
     }
 
     public void testData(){
         meItems.add(new MeItem(R.drawable.ic_setting,"Settings",MeItem.ITEM_TYPE_SETTING));
+        meItems.add(new MeItem(R.drawable.ic_setting,"Logout",MeItem.ITEM_TYPE_LOGOUT));
     }
 }
