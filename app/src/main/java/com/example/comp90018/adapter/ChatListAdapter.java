@@ -124,4 +124,8 @@ public class ChatListAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return chatItems.size()+1;
     }
+
+    public void addItem(ChatItem item){
+        chatItems.add(item);
+    }
 }
