@@ -1,6 +1,5 @@
 package com.example.comp90018.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,34 +10,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.R;
+import com.example.comp90018.dataBean.MessageItem;
+import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
-import com.example.comp90018.utils.RecycleItemTouchHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageListAdapter extends RecyclerView.Adapter implements RecycleItemTouchHelper.ItemTouchHelperCallback {
+public class NewFriendListAdapter extends RecyclerView.Adapter{
     // The data of the list
-    private List<MessageItem> messageItems=new ArrayList<MessageItem>();
+    private List<NewFriendItem> newFriendItems=new ArrayList<NewFriendItem>();
     // Click event listener
     private OnRecycleItemClickListener onItemClickListener;
 
     public static final int VIEW_HOLEDER_TYPE_SPACE=0;
     public static final int VIEW_HOLEDER_TYPE_NORMAL=1;
 
-    @Override
-    public void onItemDelete(int position) {
-        if(position<messageItems.size()) {
-            messageItems.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    @Override
-    public void onMove(int fromPosition, int toPosition) {
-
+    public NewFriendListAdapter(List<NewFriendItem> newFriendItems){
+        this.newFriendItems=newFriendItems;
     }
 
     //The view for each item
@@ -61,20 +51,22 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
             space=view.findViewById(R.id.item_space);
         }
     }
+
     //The method used to set a listener
     public void setOnItemClickListener(OnRecycleItemClickListener onItemClickListener){
         this.onItemClickListener=onItemClickListener;
     }
 
-    public MessageListAdapter(List<MessageItem> messageItems){
-        this.messageItems=messageItems;
-    }
-
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType==VIEW_HOLEDER_TYPE_NORMAL) {
+        if(viewType==VIEW_HOLEDER_TYPE_SPACE){
+            View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_space,parent,false);
+            NewFriendListAdapter.SpaceViewHolder holder=new NewFriendListAdapter.SpaceViewHolder(view);
+            return holder;
+        }else if(viewType==VIEW_HOLEDER_TYPE_NORMAL) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
-            ViewHolder holder = new ViewHolder(view);
+            NewFriendListAdapter.ViewHolder holder = new NewFriendListAdapter.ViewHolder(view);
             return holder;
         }else{
             return null;
@@ -84,9 +76,9 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         //Bind the data
-        if(position<messageItems.size()) {
-            MessageItem item = messageItems.get(position);
-            ViewHolder myHolder = (ViewHolder) holder;
+        if(position<newFriendItems.size()) {
+            NewFriendItem item = newFriendItems.get(position);
+            NewFriendListAdapter.ViewHolder myHolder = (NewFriendListAdapter.ViewHolder) holder;
             myHolder.imageAvatar.setImageBitmap(item.getImage());
             myHolder.nameText.setText(item.getName());
             myHolder.contentText.setText(item.getContent());
@@ -107,11 +99,19 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
 
     @Override
     public int getItemViewType(int position) {
-        return VIEW_HOLEDER_TYPE_NORMAL;
+        if(position==newFriendItems.size()){
+            return VIEW_HOLEDER_TYPE_SPACE;
+        }else{
+            return VIEW_HOLEDER_TYPE_NORMAL;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return messageItems.size();
+        return newFriendItems.size()+1;
+    }
+
+    public List<NewFriendItem> getNewFriendItems(){
+        return newFriendItems;
     }
 }

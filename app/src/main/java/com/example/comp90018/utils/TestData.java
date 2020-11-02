@@ -10,6 +10,7 @@ import com.example.comp90018.dataBean.ChatItem;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.dataBean.FriendProfile;
 import com.example.comp90018.dataBean.MessageItem;
+import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.dataBean.User;
 import com.example.comp90018.ui.MainViewActivity;
 
@@ -23,15 +24,14 @@ import java.util.List;
  */
 public class TestData {
     private static TestData testData;
-    public User testUser;
     public List<MessageItem> testMessageItem;
     public Bitmap testPic;
     public List<ChatItem> testChatItem;
     public List<FriendItem> testFriendItems;
     public FriendProfile testFriendProfile;
+    public List<NewFriendItem> testNewFriendsItem;
 
     private TestData(Context context){
-        testUser=new User(0,"User Name","First Name","Middle Name","Last Name");
         testPic= BitmapFactory.decodeResource(context.getResources(),R.drawable.test_image);
 
         testMessageItem=new ArrayList<MessageItem>();
@@ -78,6 +78,13 @@ public class TestData {
         testFriendItems.add(new FriendItem(13,testPic,"#152675"));
 
         testFriendProfile=new FriendProfile(1,"Alice",testPic);
+
+        testNewFriendsItem=new ArrayList<NewFriendItem>();
+        testNewFriendsItem.add(new NewFriendItem(1,testPic,"New Friend 1","Hi, I'm new friend 1",new Date()));
+        testNewFriendsItem.add(new NewFriendItem(2,testPic,"New Friend 2","Hi, I'm new friend 2",new Date()));
+        testNewFriendsItem.add(new NewFriendItem(3,testPic,"New Friend 3","Hi, I'm new friend 3",new Date()));
+        testNewFriendsItem.add(new NewFriendItem(4,testPic,"New Friend 4","Hi, I'm new friend 4",new Date()));
+        testNewFriendsItem.add(new NewFriendItem(5,testPic,"New Friend 5","Hi, I'm new friend 5",new Date()));
     }
 
     public static TestData getTestData(Context context){

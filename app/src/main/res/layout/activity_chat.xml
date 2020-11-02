@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="40dp"
+        android:textSize="20dp"
         android:text="Friend's Name"
         app:layout_constraintBaseline_toBaselineOf="@id/chat_back_btn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,8 +45,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
 
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

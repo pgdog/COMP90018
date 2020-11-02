@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.example.comp90018.R;
 import com.example.comp90018.adapter.MeListAdapter;
 import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.MeItem;
+import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 import com.google.android.gms.tasks.Continuation;
@@ -57,6 +59,7 @@ public class MeFragment extends Fragment {
     private ImageView imageView;
     private TextView nameText;
     private RecyclerView recyclerView;
+    private Button editBtn;
 
     //List of the item
     private List<MeItem> meItems;
@@ -67,6 +70,7 @@ public class MeFragment extends Fragment {
     private StorageReference mStorageRef;
     private String photoLink;
     public static final int PICK_IMAGE_REQUEST = 1;
+    public static final int PERSONAL_INFO_REQUEST = 2;
     private Uri uploadUri;
 
     public MeFragment() {
@@ -78,21 +82,7 @@ public class MeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        photoLink = (String)snapshot.child("photo").getValue();
-                        Picasso.get().load(photoLink).into(imageView);
-                        Log.i("Login result", "data is " + photoLink);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         //Initialize data
         initData();
     }
@@ -119,9 +109,10 @@ public class MeFragment extends Fragment {
         titleText=(TextView)view.findViewById(R.id.me_title_text);
         imageView=(ImageView)view.findViewById(R.id.me_image);
         nameText=(TextView)view.findViewById(R.id.me_name);
+        editBtn=(Button)view.findViewById(R.id.me_edit_btn);
 
-        Bitmap testPic= BitmapFactory.decodeResource(this.getContext().getResources(),R.drawable.test_image);
-        imageView.setImageBitmap(testPic);
+        Picasso.get().load(DataManager.getDataManager(getActivity()).getUser().getImage()).into(imageView);
+        nameText.setText(DataManager.getDataManager(getActivity()).getUser().getUserName());
         recyclerView=(RecyclerView)view.findViewById(R.id.me_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -143,6 +134,14 @@ public class MeFragment extends Fragment {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(intent,PICK_IMAGE_REQUEST);
                 }
+            }
+        });
+
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity().getApplicationContext(),PersonalInfoActivity.class);
+                startActivityForResult(intent,PERSONAL_INFO_REQUEST);
             }
         });
     }
@@ -177,6 +176,9 @@ public class MeFragment extends Fragment {
                     }
                 }
             });
+        }
+        if(requestCode==PERSONAL_INFO_REQUEST && resultCode==PersonalInfoActivity.PERSONAL_INFO_CHANGED_RESULT){
+            initView();
         }
     }
 }

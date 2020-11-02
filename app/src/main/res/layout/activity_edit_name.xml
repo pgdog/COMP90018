@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/edit_name_back_btn"
+        android:layout_width="@dimen/design_back_btn_size"
+        android:layout_height="@dimen/design_back_btn_size"
+        android:background="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"></Button>
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Name"
+        android:textSize="@dimen/design_title_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_name_back_btn"
+        app:layout_constraintEnd_toStartOf="@+id/edit_name_done_btn"
+        app:layout_constraintStart_toEndOf="@+id/edit_name_back_btn"
+        app:layout_constraintTop_toTopOf="@+id/edit_name_back_btn"></TextView>
+
+    <Button
+        android:id="@+id/edit_name_done_btn"
+        android:layout_width="@dimen/design_back_btn_size"
+        android:layout_height="@dimen/design_back_btn_size"
+        android:background="@drawable/ic_done"
+        app:layout_constraintBottom_toBottomOf="@+id/textView9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView9"
+        android:layout_marginRight="15dp"></Button>
+
+    <EditText
+        android:id="@+id/edit_name_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:text="123"
+        android:textSize="@dimen/design_item_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9"
+        android:layout_marginTop="20dp"
+        android:padding="15dp"></EditText>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

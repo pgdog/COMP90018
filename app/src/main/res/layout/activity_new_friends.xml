@@ -6,46 +6,46 @@
     android:layout_height="match_parent"
     tools:context=".ui.MessageFragment">
 
+    <Button
+        android:id="@+id/new_friend_back_btn"
+        android:layout_width="@dimen/design_back_btn_size"
+        android:layout_height="@dimen/design_back_btn_size"
+        android:background="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="15dp">
+
+    </Button>
+
     <TextView
-        android:id="@+id/message_title"
+        android:id="@+id/friends_request_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/message_title"
-        android:textSize="@dimen/design_title_text_size"
+        android:text="@string/friend_request_title"
         android:textAlignment="center"
+        android:textSize="@dimen/design_title_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/new_friend_back_btn" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="15dp"
         android:background="@color/colorBottomNavBack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/message_title"></TextView>
+        app:layout_constraintTop_toBottomOf="@+id/friends_request_title"
+        android:layout_marginTop="20dp"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/message_recycle"
+        android:id="@+id/new_friend_recycle_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:paddingLeft="15dp"-->
-    <!--            android:paddingRight="15dp"-->
-    <!--            android:paddingTop="15dp"-->
-    <!--            android:orientation="vertical">-->
-    <!--            <SearchView-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:background="@drawable/shape_corner" />-->
-    <!--        </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

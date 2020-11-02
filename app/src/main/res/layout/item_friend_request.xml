@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:background="@color/color_item_selector">
+
+    <ImageView
+        android:id="@+id/item_friend_request_ic"
+        android:layout_width="@dimen/design_friend_pic_size"
+        android:layout_height="@dimen/design_friend_pic_size"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/ic_friend_requests"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/friends_request_text"
+        android:textSize="@dimen/design_item_text_size"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_friend_request_ic"
+        app:layout_constraintStart_toEndOf="@+id/item_friend_request_ic"
+        app:layout_constraintTop_toTopOf="@+id/item_friend_request_ic"></TextView>
+
+    <TextView
+        android:id="@+id/item_friend_request_num_text"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/style_menu_badge"
+        android:gravity="center"
+        android:text="99+"
+        android:textColor="@color/colorWhite"
+        android:textSize="10dp"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/textView4"></TextView>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/design_divider_line_margin_left"
+        android:background="@color/colorBottomNavBack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"></TextView>
+</androidx.constraintlayout.widget.ConstraintLayout>
