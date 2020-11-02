@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/colorWhite">
+    android:background="@color/color_item_selector">
 
     <ImageView
         android:id="@+id/item_message_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/design_friend_pic_size"
+        android:layout_height="@dimen/design_friend_pic_size"
         android:background="@color/colorBottomNavBack"
         android:contentDescription="@string/description_image_user"
         android:scaleType="fitXY"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toEndOf="@+id/item_message_image"
         app:layout_constraintTop_toTopOf="@+id/item_message_image"
         android:layout_marginLeft="15dp"
-        android:textSize="25dp">
+        android:textSize="@dimen/design_item_text_size">
 
     </TextView>
 
@@ -55,6 +55,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_message_image"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="90dp"></TextView>
+        android:layout_marginLeft="@dimen/design_divider_line_margin_left"></TextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -60,6 +60,6 @@ public class RecycleItemTouchHelper extends ItemTouchHelper.Callback {
 
     public interface ItemTouchHelperCallback{
         void onItemDelete(int position);
-        void onMove(int fromPosition,int toPosition);;
+        void onMove(int fromPosition,int toPosition);
     }
 }

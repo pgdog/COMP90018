@@ -3,7 +3,9 @@ package com.example.comp90018.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -14,6 +16,8 @@ import com.example.comp90018.R;
 import com.example.comp90018.dataBean.User;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.TestData;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +30,10 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainViewActivity extends AppCompatActivity {
     //Views
     private BottomNavigationView navView;
+    private BottomNavigationItemView messageTab;
+    private BottomNavigationItemView friendsTab;
+    private View messageBadge;
+    private View friendsBadge;
 
     //Fragments
     private MessageFragment messageFragment;
@@ -105,22 +113,28 @@ public class MainViewActivity extends AppCompatActivity {
             }
         });
 
-        //Used for message notification
-//        BottomNavigationMenuView menuView = (BottomNavigationMenuView) navView.getChildAt(0);
-//        View tab = menuView.getChildAt(3);
-//        BottomNavigationItemView itemView = (BottomNavigationItemView) tab;
-//        View badge = LayoutInflater.from(this).inflate(R.layout.my, menuView, false);
-//        itemView.addView(badge);
-//        TextView textView = badge.findViewById(R.id.texT);
-//        textView.setText(String.valueOf(1));
-//        textView.setVisibility(View.VISIBLE);
+//      Used for message notification
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) navView.getChildAt(0);
+        View tab = menuView.getChildAt(3);
+        messageTab=(BottomNavigationItemView)menuView.getChildAt(0);
+        friendsTab=(BottomNavigationItemView)menuView.getChildAt(1);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) tab;
+        messageBadge = LayoutInflater.from(this).inflate(R.layout.menu_badge, menuView, false);
+        friendsBadge = LayoutInflater.from(this).inflate(R.layout.menu_badge, menuView, false);
+        messageTab.addView(messageBadge);
+        friendsTab.addView(friendsBadge);
+
+        showFriendsBadge(DataManager.getDataManager(this).getNewFriendItems().size());
+        showMessageBadge(108);
+//        hideFriendsBadge();
+//        hideMessageBadge();
     }
 
     /**
      * Set the user's data while the application start
      */
     public void initUserData(){
-        DataManager.getDataManager(this).setUser(TestData.getTestData(this).testUser);
+        DataManager.getDataManager(this).setNewFriendItems(TestData.getTestData(this).testNewFriendsItem);
     }
 
     @Override
@@ -129,4 +143,46 @@ public class MainViewActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Display the badge of message
+     * @param num the number of message unread
+     */
+    public void showMessageBadge(int num){
+        TextView textView = messageTab.findViewById(R.id.badge_text);
+        if(num>99){
+            textView.setText("99+");
+        }else{
+            textView.setText(String.valueOf(num));
+        }
+
+        messageBadge.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Hide the badge of message
+     */
+    public void hideMessageBadge(){
+        messageBadge.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Display the badge of friends
+     * @param num the number of friend requests
+     */
+    public void showFriendsBadge(int num){
+        TextView textView = friendsBadge.findViewById(R.id.badge_text);
+        if(num>99){
+            textView.setText("99+");
+        }else{
+            textView.setText(String.valueOf(num));
+        }
+        friendsBadge.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Hide the badge of friends
+     */
+    public void hideFriendsBadge(){
+        friendsBadge.setVisibility(View.INVISIBLE);
+    }
 }

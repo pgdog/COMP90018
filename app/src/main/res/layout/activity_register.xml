@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+    <ImageView
+        android:id="@+id/register_lock_ic2"
+        android:layout_width="@dimen/design_home_icon_size"
+        android:layout_height="@dimen/design_home_icon_size"
+        android:background="@drawable/ic_lock"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/confirmPassword"
+        android:layout_marginLeft="40dp"></ImageView>
+
     <EditText
         android:id="@+id/confirmPassword"
         android:layout_width="0dp"
@@ -15,8 +25,20 @@
         android:hint="confirm password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/register_lock_ic2"
+        app:layout_constraintTop_toBottomOf="@+id/signUpPassword"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="40dp"/>
+
+    <ImageView
+        android:id="@+id/register_email_ic"
+        android:layout_width="@dimen/design_home_icon_size"
+        android:layout_height="@dimen/design_home_icon_size"
+        android:background="@drawable/ic_email"
+        app:layout_constraintBottom_toBottomOf="@+id/signUpEmail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpPassword" />
+        app:layout_constraintTop_toTopOf="@+id/signUpEmail"
+        android:layout_marginLeft="40dp"></ImageView>
 
     <EditText
         android:id="@+id/signUpEmail"
@@ -27,9 +49,20 @@
         android:hint="email address"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/register_email_ic"
+        app:layout_constraintTop_toBottomOf="@+id/signUpUserName"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="5dp"/>
+
+    <ImageView
+        android:id="@+id/register_lock_ic"
+        android:layout_width="@dimen/design_home_icon_size"
+        android:layout_height="@dimen/design_home_icon_size"
+        android:background="@drawable/ic_lock"
+        app:layout_constraintBottom_toBottomOf="@+id/signUpPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpUserName" />
+        app:layout_constraintTop_toTopOf="@+id/signUpPassword"
+        android:layout_marginLeft="40dp"></ImageView>
 
     <EditText
         android:id="@+id/signUpPassword"
@@ -40,8 +73,10 @@
         android:hint="password, at least 6 characters"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpEmail" />
+        app:layout_constraintStart_toEndOf="@+id/register_lock_ic"
+        app:layout_constraintTop_toBottomOf="@+id/signUpEmail"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="40dp"/>
 
     <TextView
         android:id="@+id/signUpTitle"
@@ -59,17 +94,25 @@
 
     <Button
         android:id="@+id/signUpButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="135dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="161dp"
+        android:layout_marginTop="48dp"
         android:onClick="signUp"
         android:text="Sign Up!"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/confirmPassword"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/register_lock_ic2"
         app:layout_constraintTop_toBottomOf="@+id/confirmPassword" />
+
+    <ImageView
+        android:id="@+id/register_username_ic"
+        android:layout_width="@dimen/design_home_icon_size"
+        android:layout_height="@dimen/design_home_icon_size"
+        android:background="@drawable/ic_person"
+        app:layout_constraintBottom_toBottomOf="@+id/signUpUserName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/signUpUserName"
+        android:layout_marginLeft="40dp"></ImageView>
 
     <EditText
         android:id="@+id/signUpUserName"
@@ -80,20 +123,21 @@
         android:hint="username"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signUpTitle" />
+        app:layout_constraintStart_toEndOf="@+id/register_username_ic"
+        app:layout_constraintTop_toBottomOf="@+id/signUpTitle"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="5dp"/>
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <ProgressBar
+        android:id="@+id/register_progressBar"
+        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="146dp"
-        android:layout_marginTop="31dp"
-        android:layout_marginEnd="157dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signUpButton"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        app:layout_constraintVertical_bias="0.401" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

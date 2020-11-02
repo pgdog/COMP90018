@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
+import com.example.comp90018.utils.OnRecycleItemTouchListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 
 import java.util.ArrayList;
@@ -90,10 +94,18 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
         friendListAdapter.setOnItemClickListener(new OnRecycleItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent=new Intent(getActivity().getApplicationContext(),FriendProfileActivity.class);
                 FriendItem item=friendListAdapter.getFriendListItem().get(position);
-                intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,item.getID());
-                startActivity(intent);
+                if(item.getItemType()==FriendListAdapter.VIEW_HOLEDER_TYPE_NORMAL){
+                    //Go to the friend's profile activity
+                    Intent intent=new Intent(getActivity().getApplicationContext(),FriendProfileActivity.class);
+                    intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,item.getID());
+                    startActivity(intent);
+                }else if(item.getItemType()==FriendListAdapter.VIEW_HOLEDER_TYPE_REQUEST){
+                    //Go to the new friend activity
+                    Intent intent=new Intent(getActivity().getApplicationContext(),NewFriendsActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
 
@@ -106,7 +118,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
 
                 //Scroll the list to the correct position
                 List<FriendItem> items=friendListAdapter.getFriendListItem();
-                for(int i=0;i<items.size();i++){
+                for(int i=1;i<items.size();i++){
                     if(items.get(i).getName().charAt(0)-index.charAt(0)>=0){
                         ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i,0);
                         break;
@@ -121,11 +133,21 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
         });
 
         indexCenterText.setVisibility(View.GONE);
+        showRequestNumText(DataManager.getDataManager(getActivity()).getNewFriendItems().size());
     }
 
     @Override
     public void onClick(View v){
         Intent intent=new Intent(getActivity().getApplicationContext(), UsersActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * Display the TextView of request num with a number, if the num is zero, hide it.
+     * @param num the number of requests
+     */
+    public void showRequestNumText(int num){
+        friendListAdapter.setRequestNum(num);
+        friendListAdapter.notifyDataSetChanged();
     }
 }
