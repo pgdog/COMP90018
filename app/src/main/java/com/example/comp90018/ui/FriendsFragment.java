@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.comp90018.R;
+import com.example.comp90018.SearchUserActivity;
 import com.example.comp90018.UsersActivity;
 import com.example.comp90018.adapter.FriendListAdapter;
 import com.example.comp90018.adapter.MessageListAdapter;
@@ -125,7 +126,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
-        Intent intent=new Intent(getActivity().getApplicationContext(), UsersActivity.class);
+        Intent intent=new Intent(getActivity().getApplicationContext(), SearchUserActivity.class);
         startActivity(intent);
     }
 }

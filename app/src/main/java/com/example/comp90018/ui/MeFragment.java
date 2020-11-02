@@ -1,11 +1,14 @@
 package com.example.comp90018.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +30,9 @@ import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.MeItem;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +40,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -52,10 +61,13 @@ public class MeFragment extends Fragment {
     //List of the item
     private List<MeItem> meItems;
 
-    private FirebaseAuth mAuth;
     FirebaseUser user;
+    private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseRef;
+    private StorageReference mStorageRef;
     private String photoLink;
+    public static final int PICK_IMAGE_REQUEST = 1;
+    private Uri uploadUri;
 
     public MeFragment() {
         // Required empty public constructor
@@ -125,6 +137,11 @@ public class MeFragment extends Fragment {
                     getActivity().finish();
                 }else if(position == 0){
 
+                }else if(position ==2){
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(intent,PICK_IMAGE_REQUEST);
                 }
             }
         });
@@ -133,5 +150,33 @@ public class MeFragment extends Fragment {
     public void testData(){
         meItems.add(new MeItem(R.drawable.ic_setting,"Settings",MeItem.ITEM_TYPE_SETTING));
         meItems.add(new MeItem(R.drawable.ic_setting,"Logout",MeItem.ITEM_TYPE_LOGOUT));
+        meItems.add(new MeItem(R.drawable.ic_setting,"Change Photo",MeItem.ITEM_TYPE_CHANGEPHOTO));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null
+                        && data.getData() != null){
+            uploadUri = data.getData();
+            mStorageRef = FirebaseStorage.getInstance().getReference("users").child(mAuth.getCurrentUser().getUid()+".png");
+            mStorageRef.putFile(uploadUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if(!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    return mStorageRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        mDatabaseRef.child("photo").setValue(downloadUri.toString());
+                    }
+                }
+            });
+        }
     }
 }
