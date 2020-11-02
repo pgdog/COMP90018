@@ -64,10 +64,6 @@ public class ChatListAdapter extends RecyclerView.Adapter {
             View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat,parent,false);
             ViewHolder holder=new ViewHolder(view);
             return holder;
-        }else if(viewType==VIEW_HOLEDER_TYPE_SPACE){
-            View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_space,parent,false);
-            SpaceViewHolder holder=new SpaceViewHolder(view);
-            return holder;
         }else{
             return null;
         }
@@ -113,16 +109,12 @@ public class ChatListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(position==chatItems.size()){
-            return VIEW_HOLEDER_TYPE_SPACE;
-        }else{
-            return VIEW_HOLEDER_TYPE_NORMAL;
-        }
+        return VIEW_HOLEDER_TYPE_NORMAL;
     }
 
     @Override
     public int getItemCount() {
-        return chatItems.size()+1;
+        return chatItems.size();
     }
 
     public void addItem(ChatItem item){

@@ -7,14 +7,14 @@
     android:orientation="horizontal"
     android:id="@+id/chat_layout_parent"
     android:clickable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/item_chat_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

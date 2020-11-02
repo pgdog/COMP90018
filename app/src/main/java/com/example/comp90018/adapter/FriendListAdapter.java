@@ -1,8 +1,6 @@
 package com.example.comp90018.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +14,6 @@ import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.R;
 import com.example.comp90018.ui.SideIndexBar;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
-import com.example.comp90018.utils.OnRecycleItemTouchListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +30,6 @@ public class FriendListAdapter extends RecyclerView.Adapter {
 
     // The listener for the click event
     private OnRecycleItemClickListener onItemClickListener;
-    //The listener for  the touch event
-    private OnRecycleItemTouchListener onRecycleItemTouchListener;
-
     public static final int VIEW_HOLEDER_TYPE_SPACE=0;
     public static final int VIEW_HOLEDER_TYPE_NORMAL=1;
     public static final int VIEW_HOLEDER_TYPE_INDEX=2;
@@ -129,11 +123,7 @@ public class FriendListAdapter extends RecyclerView.Adapter {
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType==VIEW_HOLEDER_TYPE_SPACE){
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_space,parent,false);
-            SpaceViewHolder holder=new SpaceViewHolder(view);
-            return holder;
-        }else if(viewType==VIEW_HOLEDER_TYPE_NORMAL) {
+        if(viewType==VIEW_HOLEDER_TYPE_NORMAL) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friends, parent, false);
             ViewHolder holder = new ViewHolder(view);
             return holder;
@@ -204,16 +194,12 @@ public class FriendListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(position==friendItems.size()){
-            return VIEW_HOLEDER_TYPE_SPACE;
-        }else{
-            return friendItems.get(position).getItemType();
-        }
+        return friendItems.get(position).getItemType();
     }
 
     @Override
     public int getItemCount() {
-        return friendItems.size()+1;
+        return friendItems.size();
     }
 
     //The method used to set a listener
@@ -221,9 +207,6 @@ public class FriendListAdapter extends RecyclerView.Adapter {
         this.onItemClickListener=onItemClickListener;
     }
 
-    public void setOnItemTouchListener(OnRecycleItemTouchListener onItemTouchListener){
-        this.onRecycleItemTouchListener=onItemTouchListener;
-    }
 
     public List<FriendItem> getFriendListItem(){
         return this.friendItems;

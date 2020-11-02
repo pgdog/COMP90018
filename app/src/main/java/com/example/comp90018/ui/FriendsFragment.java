@@ -1,40 +1,25 @@
 package com.example.comp90018.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.comp90018.R;
-import com.example.comp90018.UsersActivity;
+import com.example.comp90018.SearchUserActivity;
 import com.example.comp90018.adapter.FriendListAdapter;
-import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
-import com.example.comp90018.utils.OnRecycleItemTouchListener;
-import com.example.comp90018.utils.RecycleItemTouchHelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class FriendsFragment extends Fragment implements View.OnClickListener {
@@ -138,7 +123,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
-        Intent intent=new Intent(getActivity().getApplicationContext(), UsersActivity.class);
+        Intent intent=new Intent(getActivity().getApplicationContext(), SearchUserActivity.class);
         startActivity(intent);
     }
 

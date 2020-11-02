@@ -20,6 +20,7 @@ public class EditNameActivity extends AppCompatActivity {
     private Button backBtn;
     private Button doneBtn;
 
+    public static int NAME_CHANGED_RESULT=1;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +82,7 @@ public class EditNameActivity extends AppCompatActivity {
                 DataManager dataManager=DataManager.getDataManager(getApplicationContext());
                 dataManager.getDatabaseReference().child("users").child(dataManager.getUser().getID()).child("username").setValue(newName);
                 dataManager.getUser().setUserName(newName);
-                setResult(1);
+                setResult(NAME_CHANGED_RESULT);
                 finish();
             }
         });

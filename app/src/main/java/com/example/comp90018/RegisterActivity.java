@@ -64,13 +64,14 @@ public class RegisterActivity extends AppCompatActivity {
                                     child("username").setValue(username.getText().toString());
                             myRef.child("users").child(mAuth.getCurrentUser().getUid()).
                                     child("email").setValue(mAuth.getCurrentUser().getEmail());
+                            myRef.child("users").child(mAuth.getCurrentUser().getUid()).
+                                    child("uid").setValue(mAuth.getCurrentUser().getUid());
                             mStorageRef.putFile(defaultphoto).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                 @Override
                                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                                     if(!task.isSuccessful()){
                                         throw task.getException();
                                     }
-
                                     return mStorageRef.getDownloadUrl();
                                 }
                             }).addOnCompleteListener(new OnCompleteListener<Uri>() {

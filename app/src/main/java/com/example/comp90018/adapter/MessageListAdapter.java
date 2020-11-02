@@ -72,11 +72,7 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType==VIEW_HOLEDER_TYPE_SPACE){
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_space,parent,false);
-            SpaceViewHolder holder=new SpaceViewHolder(view);
-            return holder;
-        }else if(viewType==VIEW_HOLEDER_TYPE_NORMAL) {
+        if(viewType==VIEW_HOLEDER_TYPE_NORMAL) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
             ViewHolder holder = new ViewHolder(view);
             return holder;
@@ -111,15 +107,11 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
 
     @Override
     public int getItemViewType(int position) {
-        if(position==messageItems.size()){
-            return VIEW_HOLEDER_TYPE_SPACE;
-        }else{
-            return VIEW_HOLEDER_TYPE_NORMAL;
-        }
+        return VIEW_HOLEDER_TYPE_NORMAL;
     }
 
     @Override
     public int getItemCount() {
-        return messageItems.size()+1;
+        return messageItems.size();
     }
 }

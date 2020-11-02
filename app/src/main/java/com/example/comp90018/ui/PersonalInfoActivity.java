@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,11 @@ public class PersonalInfoActivity extends AppCompatActivity {
     private TextView nameText;
 
     private boolean isDataChanged;
+
+    public static int PERSONAL_INFO_CHANGED_RESULT=1;
+
+    public static int NAME_EDIT_REQUEST=1;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +64,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(isDataChanged){
-                    setResult(1);
+                    setResult(PERSONAL_INFO_CHANGED_RESULT);
                 }
                 finish();
             }
@@ -89,7 +95,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(),EditNameActivity.class);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent,NAME_EDIT_REQUEST);
             }
         });
         nameEditView.setOnTouchListener(new View.OnTouchListener() {
@@ -111,7 +117,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1 && requestCode==1){
+        if(requestCode==NAME_EDIT_REQUEST && requestCode== EditNameActivity.NAME_CHANGED_RESULT){
             isDataChanged=true;
             initView();
         }
