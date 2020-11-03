@@ -61,16 +61,17 @@
     <LinearLayout
         android:id="@+id/friend_profile_chat"
         android:layout_width="0dp"
-        android:orientation="horizontal"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textview9"
-        android:gravity="center"
+        android:layout_marginTop="176dp"
         android:background="@drawable/shape_border"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview9">
 
         <ImageView
             android:id="@+id/friend_profile_chat_icon"
@@ -84,6 +85,35 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Send Message"></TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/friend_profile_delete_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_border"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/friend_profile_chat"
+        app:layout_constraintVertical_bias="0.118">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_delete"></ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Delete Friend"></TextView>
 
     </LinearLayout>
 

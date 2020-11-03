@@ -84,55 +84,7 @@ public class FriendRequestActivity extends AppCompatActivity {
         acceptView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Accept the friend request
-                //-------------update the data here---------------
-                // add current user's uid from target user's friend list
-                //add target user's uid from current user's friend list
-                DataManager dataManager=DataManager.getDataManager(getApplicationContext());
-                DatabaseReference databaseReference= dataManager.getDatabaseReference();
-
-                databaseReference.child("users").child(id)
-                        .child("friends").push().setValue(dataManager.getUser().getID());
-                databaseReference.child("users").child(dataManager.getUser().getID())
-                        .child("friends").push().setValue(id);
-
-                //Add the friend to local
-                FriendItem newFriend=new FriendItem(id,pic,name);
-                dataManager.getFriendItems().add(newFriend);
-
-                //Delete the request data from local value
-                for(int i=0;i<dataManager.getNewFriendItems().size();i++){
-                    if(dataManager.getNewFriendItems().get(i).getID().equals(id)){
-                        dataManager.getNewFriendItems().remove(i);
-                        break;
-                    }
-                }
-                dataManager.setLocalRequestChanged(true);
-
-                //delete friend request of current user from target user's request
-                databaseReference.child("request").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot realSnapShot : snapshot.getChildren()) {
-                            //Delete the friend request
-                            if (id.equals((String) realSnapShot.getValue())) {
-                                realSnapShot.getRef().setValue(null);
-                                break;
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                //------------------------------------------------
-
-                //Go back to the last activity
-                setResult(NewFriendsActivity.CODE_FROM_FRIEND_REQUEST_FRIEND_CHANGED);
-                finish();
+                acceptRequest();
             }
         });
 
@@ -154,46 +106,7 @@ public class FriendRequestActivity extends AppCompatActivity {
         rejectView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Reject the friend request
-                //-------------update the data here---------------
-
-                //Only delete the request
-                DataManager dataManager=DataManager.getDataManager(getApplicationContext());
-                DatabaseReference databaseReference= dataManager.getDatabaseReference();
-
-                //Delete the data from local value
-                for(int i=0;i<dataManager.getNewFriendItems().size();i++){
-                    if(dataManager.getNewFriendItems().get(i).getID().equals(id)){
-                        dataManager.getNewFriendItems().remove(i);
-                        break;
-                    }
-                }
-                dataManager.setLocalRequestChanged(true);
-
-                //Delete the data from firebase
-                databaseReference.child("request").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot realSnapShot : snapshot.getChildren()) {
-                            //Delete the friend request
-                            if (id.equals((String) realSnapShot.getValue())) {
-                                realSnapShot.getRef().setValue(null);
-                                break;
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                //------------------------------------------------
-
-                //Go back to the last activity
-                setResult(NewFriendsActivity.CODE_FROM_FRIEND_REQUEST_DATA_CHANGED);
-                finish();
+                rejectRequest();
             }
         });
 
@@ -211,5 +124,99 @@ public class FriendRequestActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    public void rejectRequest(){
+        //Reject the friend request
+        //-------------update the data here---------------
+
+        //Only delete the request
+        DataManager dataManager=DataManager.getDataManager(getApplicationContext());
+        DatabaseReference databaseReference= dataManager.getDatabaseReference();
+
+        //Delete the data from local value
+        for(int i=0;i<dataManager.getNewFriendItems().size();i++){
+            if(dataManager.getNewFriendItems().get(i).getID().equals(id)){
+                dataManager.getNewFriendItems().remove(i);
+                break;
+            }
+        }
+        dataManager.setLocalRequestChanged(true);
+
+        //Delete the data from firebase
+        databaseReference.child("request").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot realSnapShot : snapshot.getChildren()) {
+                    //Delete the friend request
+                    if (id.equals((String) realSnapShot.getValue())) {
+                        realSnapShot.getRef().setValue(null);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //------------------------------------------------
+
+        //Go back to the last activity
+        setResult(NewFriendsActivity.CODE_FROM_FRIEND_REQUEST_DATA_CHANGED);
+        finish();
+    }
+    public void acceptRequest(){
+        //Accept the friend request
+        //-------------update the data here---------------
+        // add current user's uid from target user's friend list
+        //add target user's uid from current user's friend list
+        DataManager dataManager=DataManager.getDataManager(getApplicationContext());
+        DatabaseReference databaseReference= dataManager.getDatabaseReference();
+
+        databaseReference.child("users").child(id)
+                .child("friends").push().setValue(dataManager.getUser().getID());
+        databaseReference.child("users").child(dataManager.getUser().getID())
+                .child("friends").push().setValue(id);
+
+        //Add the friend to local
+        FriendItem newFriend=new FriendItem(id,pic,name);
+        dataManager.getFriendItems().add(newFriend);
+
+        //Delete the request data from local value
+        for(int i=0;i<dataManager.getNewFriendItems().size();i++){
+            if(dataManager.getNewFriendItems().get(i).getID().equals(id)){
+                dataManager.getNewFriendItems().remove(i);
+                break;
+            }
+        }
+        dataManager.setLocalRequestChanged(true);
+
+        //delete friend request of current user from target user's request
+        databaseReference.child("request").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot realSnapShot : snapshot.getChildren()) {
+                    //Delete the friend request
+                    if (id.equals((String) realSnapShot.getValue())) {
+                        realSnapShot.getRef().setValue(null);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //------------------------------------------------
+
+        //Go back to the last activity
+        setResult(NewFriendsActivity.CODE_FROM_FRIEND_REQUEST_FRIEND_CHANGED);
+        finish();
     }
 }
