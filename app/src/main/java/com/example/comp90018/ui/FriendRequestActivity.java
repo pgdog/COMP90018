@@ -9,10 +9,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.comp90018.R;
+import com.example.comp90018.dataBean.FriendItem;
+import com.example.comp90018.utils.DataManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class FriendRequestActivity extends AppCompatActivity {
     private Button backBtn;
@@ -22,8 +30,11 @@ public class FriendRequestActivity extends AppCompatActivity {
     private LinearLayout acceptView;
     private LinearLayout rejectView;
 
+    private String id;
+    private String pic;
     private String name;
     private String content;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +57,8 @@ public class FriendRequestActivity extends AppCompatActivity {
 
     public void initData(){
         Intent intent=getIntent();
+        id=intent.getStringExtra(MainViewActivity.VALUES_FRIEND_ID);
+        pic=intent.getStringExtra("Picture");
         name=intent.getStringExtra("Name");
         content=intent.getStringExtra("Content");
     }
@@ -64,6 +77,7 @@ public class FriendRequestActivity extends AppCompatActivity {
             }
         });
 
+        Picasso.get().load(pic).into(imageView);
         nameText.setText(name);
         contentText.setText(content);
 
@@ -72,11 +86,52 @@ public class FriendRequestActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Accept the friend request
                 //-------------update the data here---------------
+                // add current user's uid from target user's friend list
+                //add target user's uid from current user's friend list
+                DataManager dataManager=DataManager.getDataManager(getApplicationContext());
+                DatabaseReference databaseReference= dataManager.getDatabaseReference();
+
+                databaseReference.child("users").child(id)
+                        .child("friends").push().setValue(dataManager.getUser().getID());
+                databaseReference.child("users").child(dataManager.getUser().getID())
+                        .child("friends").push().setValue(id);
+
+                //Add the friend to local
+                FriendItem newFriend=new FriendItem(id,pic,name);
+                dataManager.getFriendItems().add(newFriend);
+
+                //Delete the request data from local value
+                for(int i=0;i<dataManager.getNewFriendItems().size();i++){
+                    if(dataManager.getNewFriendItems().get(i).getID().equals(id)){
+                        dataManager.getNewFriendItems().remove(i);
+                        break;
+                    }
+                }
+                dataManager.setLocalRequestChanged(true);
+
+                //delete friend request of current user from target user's request
+                databaseReference.child("request").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot realSnapShot : snapshot.getChildren()) {
+                            //Delete the friend request
+                            if (id.equals((String) realSnapShot.getValue())) {
+                                realSnapShot.getRef().setValue(null);
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
                 //------------------------------------------------
 
                 //Go back to the last activity
-                setResult(1);
+                setResult(NewFriendsActivity.CODE_FROM_FRIEND_REQUEST_FRIEND_CHANGED);
                 finish();
             }
         });
@@ -102,10 +157,42 @@ public class FriendRequestActivity extends AppCompatActivity {
                 //Reject the friend request
                 //-------------update the data here---------------
 
+                //Only delete the request
+                DataManager dataManager=DataManager.getDataManager(getApplicationContext());
+                DatabaseReference databaseReference= dataManager.getDatabaseReference();
+
+                //Delete the data from local value
+                for(int i=0;i<dataManager.getNewFriendItems().size();i++){
+                    if(dataManager.getNewFriendItems().get(i).getID().equals(id)){
+                        dataManager.getNewFriendItems().remove(i);
+                        break;
+                    }
+                }
+                dataManager.setLocalRequestChanged(true);
+
+                //Delete the data from firebase
+                databaseReference.child("request").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot realSnapShot : snapshot.getChildren()) {
+                            //Delete the friend request
+                            if (id.equals((String) realSnapShot.getValue())) {
+                                realSnapShot.getRef().setValue(null);
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
                 //------------------------------------------------
 
                 //Go back to the last activity
-                setResult(1);
+                setResult(NewFriendsActivity.CODE_FROM_FRIEND_REQUEST_DATA_CHANGED);
                 finish();
             }
         });

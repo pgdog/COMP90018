@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.dataBean.NewFriendItem;
+import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +81,7 @@ public class NewFriendListAdapter extends RecyclerView.Adapter{
         if(position<newFriendItems.size()) {
             NewFriendItem item = newFriendItems.get(position);
             NewFriendListAdapter.ViewHolder myHolder = (NewFriendListAdapter.ViewHolder) holder;
-            myHolder.imageAvatar.setImageBitmap(item.getImage());
+            Picasso.get().load(item.getImage()).into(myHolder.imageAvatar);
             myHolder.nameText.setText(item.getName());
             myHolder.contentText.setText(item.getContent());
 

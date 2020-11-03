@@ -3,6 +3,8 @@ package com.example.comp90018.ui;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +21,13 @@ import com.example.comp90018.adapter.FriendListAdapter;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
+import com.example.comp90018.utils.TestData;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsFragment extends Fragment implements View.OnClickListener {
@@ -34,6 +42,16 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
 
     private FriendListAdapter friendListAdapter;
 
+
+    public static int CODE_TO_NEW_FRIEND=1;
+    public static int CODE_FROM_NEW_FRIEND_REQUEST_CHANGED =11;
+    public static int CODE_FROM_NEW_FRIEND_FRIEND_CHANGED=12;
+
+    private DataManager dataManager;
+    private DatabaseReference databaseReference;
+
+    //data
+    List<String> friendIds; //The user's id of friend
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -57,11 +75,51 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
         //Initialize view
         initView();
 
+
         return view;
     }
 
     public void initData(){
-        DataManager.getDataManager(getActivity()).createItemsForFriends();
+        dataManager=DataManager.getDataManager(getActivity());
+        databaseReference=dataManager.getDatabaseReference();
+        //Listen to the friend changed in firebase
+        databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //Get all friend's id
+                friendIds=new ArrayList<String>();
+                for(DataSnapshot postSnapShot: snapshot.getChildren()){
+                    friendIds.add((String)postSnapShot.getValue());
+                }
+                //Get the information of user whose id is in the lsit
+                databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<FriendItem> friendItems=new ArrayList<FriendItem>();
+                        for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                            //if uid of this user appear in the friendItems arraylist,
+                            //then add all related info into friendItems
+                            if(friendIds.contains((String)postSnapShot.child("uid").getValue())){
+                                FriendItem friendItem=new FriendItem((String)postSnapShot.child("uid").getValue(),(String)postSnapShot.child("photo").getValue(),(String)postSnapShot.child("username").getValue());
+                                friendItems.add(friendItem);
+                            }
+                        }
+                        dataManager.setFriendItems(friendItems);
+                        initView();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     public void initView(){
@@ -88,7 +146,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
                 }else if(item.getItemType()==FriendListAdapter.VIEW_HOLEDER_TYPE_REQUEST){
                     //Go to the new friend activity
                     Intent intent=new Intent(getActivity().getApplicationContext(),NewFriendsActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent,CODE_TO_NEW_FRIEND);
                 }
 
             }
@@ -134,5 +192,16 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
     public void showRequestNumText(int num){
         friendListAdapter.setRequestNum(num);
         friendListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CODE_TO_NEW_FRIEND && resultCode== CODE_FROM_NEW_FRIEND_REQUEST_CHANGED){
+            showRequestNumText(DataManager.getDataManager(getActivity()).getNewFriendItems().size());
+        }
+        if(requestCode==CODE_TO_NEW_FRIEND && resultCode==CODE_FROM_NEW_FRIEND_FRIEND_CHANGED){
+            initView();
+        }
     }
 }

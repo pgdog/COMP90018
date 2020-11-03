@@ -11,6 +11,7 @@ import com.example.comp90018.dataBean.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,11 +38,38 @@ public class DataManager {
     //The list of NewFriendItem, used to display friends request
     private List<NewFriendItem> newFriendItems;
 
+    //The flag used to prevent data conflict
+    private boolean isLocalRequestChanged;
+    private boolean isLocalFriendChanged;
+
+
+
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
 
     private DataManager(){
+        messageItems=new ArrayList<>();
+        chatItems=new ArrayList<>();
+        friendItems=new ArrayList<>();
+        newFriendItems=new ArrayList<>();
+        isLocalRequestChanged =false;
+        isLocalFriendChanged = false;
+    }
 
+    public boolean isLocalFriendChanged() {
+        return isLocalFriendChanged;
+    }
+
+    public void setLocalFriendChanged(boolean localFriendChanged) {
+        isLocalFriendChanged = localFriendChanged;
+    }
+
+    public boolean isLocalRequestChanged() {
+        return isLocalRequestChanged;
+    }
+
+    public void setLocalRequestChanged(boolean localRequestChanged) {
+        isLocalRequestChanged = localRequestChanged;
     }
 
     /**
@@ -132,21 +160,23 @@ public class DataManager {
         //See FriendItem details in the "FriendItem" class
         String userID=user.getID();
 
-        setFriendItems(TestData.getTestData(context).testFriendItems);//The data only used for test, don't use it for the final version
+
     }
 
     /**
      * According the friend's ID, get the information from database
      * @param friendID The ID of a friend
-     * @return A instance of FriendProfile
+     * @return A instance of FriendItem
      */
-    public FriendProfile getFriendProfile(int friendID){
+    public FriendItem getAFriend(String friendID){
         //According the friend's ID, get the information from database
 
-        //Needed to be implemented here
-
-        FriendProfile friend=TestData.getTestData(context).testFriendProfile;  //he data only used for test, don't use it for the final version
-        return friend;
+        for(FriendItem item:friendItems){
+            if(item.getID().equals(friendID)){
+                return item;
+            }
+        }
+        return null;
     }
 
     public void setNewFriendItems(List<NewFriendItem> newFriendItems){
