@@ -1,5 +1,6 @@
 //package com.example.comp90018.ui;
 //
+//import android.content.Intent;
 //import android.os.Bundle;
 //import android.os.PersistableBundle;
 //import android.text.TextUtils;
@@ -64,6 +65,7 @@
 //        inputEditText=(EditText)findViewById(R.id.search_friend_edit_text);
 //        resultText=(TextView)findViewById(R.id.search_friend_result_text);
 //
+//        resultText.setVisibility(View.INVISIBLE);
 //        backBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -86,7 +88,8 @@
 //    }
 //
 //    public void startSearch(View view, final String searchString){
-//        databaseReference.child("users").addValueEventListener(new ValueEventListener() {
+//        resultText.setVisibility(View.INVISIBLE);
+//        databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
 //                @Override
 //                //first onDataChange is for getting uid of the searched user
 //                public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -102,24 +105,41 @@
 //                        }
 //                        Log.i("search result", "data is " + (String) postSnapShot.child("email").getValue());
 //                    }
-//                    //after getting uid, check if the user is already friend of the current user
-//                    databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                            isFriend = false;
-//                            for (DataSnapshot postSnapShot : snapshot.getChildren()) {
-//                                //check if the searched user is friend of current user
-//                                if (searchUID.equals((String) postSnapShot.getValue())) {
-//                                    isFriend = true;
-//                                    isPending = false;
+//                    if(userFound){
+//                        //after getting uid, check if the user is already friend of the current user
+//                        databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                isFriend = false;
+//                                for (DataSnapshot postSnapShot : snapshot.getChildren()) {
+//                                    //check if the searched user is friend of current user
+//                                    if (searchUID.equals((String) postSnapShot.getValue())) {
+//                                        isFriend = true;
+//                                        isPending = false;
+//                                    }
+//                                    Log.i("search result", "data is " + (String) postSnapShot.child("email").getValue());
 //                                }
-//                                Log.i("search result", "data is " + (String) postSnapShot.child("email").getValue());
+//                                if(isFriend){
+//                                    //The friend already exist
+//                                    Intent intent=new Intent(getApplicationContext(),FriendProfileActivity.class);
+//                                    intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,searchUID);
+//                                    startActivity(intent);
+//                                }else{
+//                                    Intent intent=new Intent(getApplicationContext(),AddFriendActivity.class);
+//                                    intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,searchUID);
+//                                    intent.putExtra("Picture",userPic);
+//                                    intent.putExtra("Name",userName);
+//                                    startActivity(intent);
+//                                }
 //                            }
-//                        }
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError error) {
-//                        }
-//                    });
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError error) {
+//                            }
+//                        });
+//                    }else{
+//                        resultText.setVisibility(View.VISIBLE);
+//                    }
+//
 //                    //after getting uid, get the pending statues of the searched user
 //                    if (!TextUtils.isEmpty(searchUID)){
 //                        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("request").child(searchUID);

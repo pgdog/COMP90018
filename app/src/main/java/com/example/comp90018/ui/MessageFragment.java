@@ -21,6 +21,7 @@ import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
+import com.example.comp90018.utils.TestData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class MessageFragment extends Fragment {
      * Set data needed for displaying recent message
      */
     public void initData(){
-        DataManager.getDataManager(getActivity()).createItemsForMessage();
+        DataManager.getDataManager(getActivity()).setMessageItems(TestData.getTestData(getActivity()).testMessageItem);
     }
 
     public void initView(){
