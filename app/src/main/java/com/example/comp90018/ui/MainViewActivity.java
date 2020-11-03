@@ -12,6 +12,7 @@ import com.example.comp90018.MainActivity;
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.dataBean.NewFriendItem;
+import com.example.comp90018.dataBean.User;
 import com.example.comp90018.utils.DataManager;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
@@ -80,56 +82,6 @@ public class MainViewActivity extends AppCompatActivity {
 
        //Set the user's informaiton when the application started
        initUserData();
-       //Initialize view
-       initView();
-
-       //Listen to the request changed
-       databaseReference.child("request").child(dataManager.getUser().getID()).addValueEventListener(new ValueEventListener() {
-           @Override
-           public void onDataChange(@NonNull DataSnapshot snapshot) {
-               if(dataManager.isLocalRequestChanged()){
-                   dataManager.setLocalRequestChanged(false);
-                   showFriendsBadge(dataManager.getNewFriendItems().size());
-                   return;
-               }
-               //Get all request
-               requestIds=new ArrayList<String>();
-               for(DataSnapshot postSnapShot: snapshot.getChildren()){
-                   requestIds.add((String)postSnapShot.getValue());
-               }
-
-               //Get the information of user whose id is in requests
-               databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
-                   @Override
-                   public void onDataChange(@NonNull DataSnapshot snapshot) {
-                       List<NewFriendItem> friendRequests=new ArrayList<NewFriendItem>();
-                       for(DataSnapshot postSnapShot : snapshot.getChildren()) {
-                           //if uid of this user appear in the friendRequestUid arraylist,
-                           //then add all related info into friendRequests
-                           if(requestIds.contains((String)postSnapShot.child("uid").getValue())){
-                               NewFriendItem friendItem=new NewFriendItem();
-                               friendItem.setID((String)postSnapShot.child("uid").getValue());
-                               friendItem.setImage((String)postSnapShot.child("photo").getValue());
-                               friendItem.setName((String)postSnapShot.child("username").getValue());
-                               friendRequests.add(friendItem);
-                           }
-                       }
-                       dataManager.setNewFriendItems(friendRequests);
-                       initView();
-                   }
-
-                   @Override
-                   public void onCancelled(@NonNull DatabaseError error) {
-
-                   }
-               });
-           }
-
-           @Override
-           public void onCancelled(@NonNull DatabaseError error) {
-
-           }
-       });
     }
 
     public void initView(){
@@ -188,10 +140,89 @@ public class MainViewActivity extends AppCompatActivity {
      */
     public void initUserData(){
         dataManager=DataManager.getDataManager(this);
-        //Listen the data in the firebase
-        databaseReference=dataManager.getDatabaseReference();
+        if(dataManager.getUser()==null){
+            databaseReference= FirebaseDatabase.getInstance().getReference();
+            databaseReference.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User newUser=new User();
+                    String id=user.getUid();
+                    String username=(String)snapshot.child("username").getValue();
+                    String pic=(String)snapshot.child("photo").getValue();
+                    newUser.setID(id);
+                    newUser.setUserName(username);
+                    newUser.setImage(pic);
+                    DataManager.getDataManager(getApplicationContext()).setUser(newUser);
+                    DataManager.getDataManager(getApplicationContext()).setDatabase(FirebaseDatabase.getInstance());
+                    DataManager.getDataManager(getApplicationContext()).setDatabaseReference(databaseReference);
+                    //Initialize view
+                    initView();
+                    listenDataChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }else{
+            databaseReference=dataManager.getDatabaseReference();
+            //Initialize view
+            initView();
+            listenDataChanged();
+        }
+
     }
 
+    public void listenDataChanged(){
+        //Listen to the request changed
+        databaseReference.child("request").child(dataManager.getUser().getID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(dataManager.isLocalRequestChanged()){
+                    dataManager.setLocalRequestChanged(false);
+                    showFriendsBadge(dataManager.getNewFriendItems().size());
+                    return;
+                }
+                //Get all request
+                requestIds=new ArrayList<String>();
+                for(DataSnapshot postSnapShot: snapshot.getChildren()){
+                    requestIds.add((String)postSnapShot.getValue());
+                }
+
+                //Get the information of user whose id is in requests
+                databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<NewFriendItem> friendRequests=new ArrayList<NewFriendItem>();
+                        for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                            //if uid of this user appear in the friendRequestUid arraylist,
+                            //then add all related info into friendRequests
+                            if(requestIds.contains((String)postSnapShot.child("uid").getValue())){
+                                NewFriendItem friendItem=new NewFriendItem();
+                                friendItem.setID((String)postSnapShot.child("uid").getValue());
+                                friendItem.setImage((String)postSnapShot.child("photo").getValue());
+                                friendItem.setName((String)postSnapShot.child("username").getValue());
+                                friendRequests.add(friendItem);
+                            }
+                        }
+                        dataManager.setNewFriendItems(friendRequests);
+                        showFriendsBadge(friendRequests.size());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     /**
      * Display the badge of message, if the number is zero, hide the badge
