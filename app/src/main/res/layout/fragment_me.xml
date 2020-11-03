@@ -10,23 +10,24 @@
         android:id="@+id/me_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/design_title_divider_margin"
+        android:layout_marginLeft="@dimen/design_title_icon_size"
         android:gravity="center"
         android:text="@string/me_title"
         android:textSize="@dimen/design_title_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/me_edit_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"></TextView>
+        app:layout_constraintTop_toTopOf="parent"></TextView>
 
     <Button
         android:id="@+id/me_edit_btn"
-        android:layout_width="@dimen/design_back_btn_size"
-        android:layout_height="@dimen/design_back_btn_size"
+        android:layout_width="@dimen/design_title_icon_size"
+        android:layout_height="@dimen/design_title_icon_size"
         android:background="@drawable/ic_edit"
         app:layout_constraintBottom_toBottomOf="@+id/me_title_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/me_title_text"
-        android:layout_marginRight="15dp"></Button>
+        android:layout_marginRight="@dimen/design_title_icon_margin_left"></Button>
 
     <TextView
         android:id="@+id/textview5"
@@ -36,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/me_title_text"
-        android:layout_marginTop="20dp"></TextView>
+        android:layout_marginTop="@dimen/design_title_divider_margin"></TextView>
 
     <ImageView
         android:id="@+id/me_image"
@@ -45,14 +46,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview5"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="15dp"></ImageView>
+        android:layout_marginLeft="15dp"
+        android:scaleType="fitXY"
+        ></ImageView>
 
     <TextView
         android:id="@+id/me_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My Nickname"
-        android:textSize="@dimen/design_item_text_size"
+        android:textSize="@dimen/design_title_text_size"
         app:layout_constraintStart_toEndOf="@+id/me_image"
         app:layout_constraintTop_toTopOf="@+id/me_image"
         android:layout_marginTop="5dp"
@@ -73,12 +76,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/me_recycler_view"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview6"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

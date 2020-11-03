@@ -14,7 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SearchUserActivity"></activity>
         <activity android:name=".UsersActivity" />
         <activity android:name=".ui.FriendProfileActivity" />
         <activity android:name=".ui.ChatActivity" />
@@ -39,6 +38,8 @@
         <activity android:name=".ui.FriendRequestActivity"/>
         <activity android:name=".ui.PersonalInfoActivity"></activity>
         <activity android:name=".ui.EditNameActivity"></activity>
+        <activity android:name=".ui.SearchActivity"></activity>
+        <activity android:name=".ui.AddFriendActivity"></activity>
     </application>
 
 </manifest>
