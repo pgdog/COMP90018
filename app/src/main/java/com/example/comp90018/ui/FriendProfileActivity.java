@@ -25,6 +25,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private ImageView imageView;
     private TextView nameText;
     private LinearLayout sendMessageView;
+    private LinearLayout deleteFriendView;
 
     //data
     private String friendId;
@@ -56,6 +57,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         imageView=(ImageView)findViewById(R.id.friend_profile_image);
         nameText=(TextView)findViewById(R.id.friend_profile_name_text);
         sendMessageView=(LinearLayout)findViewById(R.id.friend_profile_chat);
+        deleteFriendView=(LinearLayout)findViewById(R.id.friend_profile_delete_view);
 
         final FriendItem friend=DataManager.getDataManager(this).getAFriend(friendId);
         Picasso.get().load(friend.getImage()).into(imageView);
@@ -79,6 +81,28 @@ public class FriendProfileActivity extends AppCompatActivity {
         });
 
         sendMessageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        view.setBackgroundColor(getColor(R.color.colorLightGrey));
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        view.setBackground(getDrawable(R.drawable.shape_border));
+                        break;
+                }
+                return false;
+            }
+        });
+
+        deleteFriendView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        deleteFriendView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()){
