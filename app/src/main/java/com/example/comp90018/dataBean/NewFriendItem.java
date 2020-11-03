@@ -6,9 +6,9 @@ import java.util.Date;
 
 public class NewFriendItem {
     //The ID of a friend
-    private int ID;
+    private String ID;
     //The image of a friend
-    private Bitmap image;
+    private String image;
     //The name of a friend
     private String name;
     //The latest message of a friend
@@ -16,7 +16,8 @@ public class NewFriendItem {
     //The date of the request
     private Date date;
 
-    public NewFriendItem(int ID, Bitmap image,String name, String content, Date date) {
+    public NewFriendItem(){}
+    public NewFriendItem(String ID, String image,String name, String content, Date date) {
         this.ID = ID;
         this.image=image;
         this.name = name;
@@ -24,11 +25,11 @@ public class NewFriendItem {
         this.date = date;
     }
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
@@ -44,11 +45,11 @@ public class NewFriendItem {
         return date;
     }
 
-    public void setID(int ID) {
+    public void setID(String ID) {
         this.ID = ID;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

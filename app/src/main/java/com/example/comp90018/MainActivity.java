@@ -62,30 +62,28 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.i("Login result", "signInWithEmail:success");
                             final FirebaseUser firebaseUser=mAuth.getCurrentUser();
                             database=FirebaseDatabase.getInstance();
                             myRef=database.getReference().child("users").child(firebaseUser.getUid());
-                            myRef.addValueEventListener(new ValueEventListener() {
+                            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.i("Login result", "signInWithEmail:success");
-                                    if(DataManager.getDataManager(getApplicationContext()).getUser()==null){
-                                        User newUser=new User();
-                                        String id=firebaseUser.getUid();
-                                        String username=(String)snapshot.child("username").getValue();
-                                        String pic=(String)snapshot.child("photo").getValue();
-                                        newUser.setID(id);
-                                        newUser.setUserName(username);
-                                        newUser.setImage(pic);
-                                        DataManager.getDataManager(getApplicationContext()).setUser(newUser);
-                                        DataManager.getDataManager(getApplicationContext()).setDatabase(database);
-                                        DataManager.getDataManager(getApplicationContext()).setDatabaseReference(database.getReference());
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        Intent intent = new Intent(getApplicationContext(), MainViewActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
+                                    User newUser=new User();
+                                    String id=firebaseUser.getUid();
+                                    String username=(String)snapshot.child("username").getValue();
+                                    String pic=(String)snapshot.child("photo").getValue();
+                                    newUser.setID(id);
+                                    newUser.setUserName(username);
+                                    newUser.setImage(pic);
+                                    DataManager.getDataManager(getApplicationContext()).setUser(newUser);
+                                    DataManager.getDataManager(getApplicationContext()).setDatabase(database);
+                                    DataManager.getDataManager(getApplicationContext()).setDatabaseReference(database.getReference());
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    Intent intent = new Intent(getApplicationContext(), MainViewActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
 
                                 @Override

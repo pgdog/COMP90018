@@ -2,29 +2,32 @@ package com.example.comp90018.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.comp90018.MainActivity;
 import com.example.comp90018.R;
-import com.example.comp90018.dataBean.User;
+import com.example.comp90018.dataBean.FriendItem;
+import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.utils.DataManager;
-import com.example.comp90018.utils.TestData;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainViewActivity extends AppCompatActivity {
@@ -45,7 +48,12 @@ public class MainViewActivity extends AppCompatActivity {
     public static final String VALUES_FRIEND_ID="FriendID";
 
     private FirebaseAuth mAuth;
-    FirebaseUser user;
+    private FirebaseUser user;
+    private DataManager dataManager;
+    private DatabaseReference databaseReference;
+
+    //Data
+    List<String> requestIds; //The user's id of request
 
    @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +83,53 @@ public class MainViewActivity extends AppCompatActivity {
        //Initialize view
        initView();
 
+       //Listen to the request changed
+       databaseReference.child("request").child(dataManager.getUser().getID()).addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot snapshot) {
+               if(dataManager.isLocalRequestChanged()){
+                   dataManager.setLocalRequestChanged(false);
+                   showFriendsBadge(dataManager.getNewFriendItems().size());
+                   return;
+               }
+               //Get all request
+               requestIds=new ArrayList<String>();
+               for(DataSnapshot postSnapShot: snapshot.getChildren()){
+                   requestIds.add((String)postSnapShot.getValue());
+               }
+
+               //Get the information of user whose id is in requests
+               databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       List<NewFriendItem> friendRequests=new ArrayList<NewFriendItem>();
+                       for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                           //if uid of this user appear in the friendRequestUid arraylist,
+                           //then add all related info into friendRequests
+                           if(requestIds.contains((String)postSnapShot.child("uid").getValue())){
+                               NewFriendItem friendItem=new NewFriendItem();
+                               friendItem.setID((String)postSnapShot.child("uid").getValue());
+                               friendItem.setImage((String)postSnapShot.child("photo").getValue());
+                               friendItem.setName((String)postSnapShot.child("username").getValue());
+                               friendRequests.add(friendItem);
+                           }
+                       }
+                       dataManager.setNewFriendItems(friendRequests);
+                       initView();
+                   }
+
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {
+
+                   }
+               });
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError error) {
+
+           }
+       });
     }
 
     public void initView(){
@@ -126,31 +181,28 @@ public class MainViewActivity extends AppCompatActivity {
 
         showFriendsBadge(DataManager.getDataManager(this).getNewFriendItems().size());
         showMessageBadge(108);
-//        hideFriendsBadge();
-//        hideMessageBadge();
     }
 
     /**
      * Set the user's data while the application start
      */
     public void initUserData(){
-        DataManager.getDataManager(this).setNewFriendItems(TestData.getTestData(this).testNewFriendsItem);
+        dataManager=DataManager.getDataManager(this);
+        //Listen the data in the firebase
+        databaseReference=dataManager.getDatabaseReference();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-    }
 
     /**
-     * Display the badge of message
+     * Display the badge of message, if the number is zero, hide the badge
      * @param num the number of message unread
      */
     public void showMessageBadge(int num){
         TextView textView = messageTab.findViewById(R.id.badge_text);
         if(num>99){
             textView.setText("99+");
+        }else if(num==0){
+            textView.setVisibility(View.INVISIBLE);
         }else{
             textView.setText(String.valueOf(num));
         }
@@ -159,30 +211,19 @@ public class MainViewActivity extends AppCompatActivity {
     }
 
     /**
-     * Hide the badge of message
-     */
-    public void hideMessageBadge(){
-        messageBadge.setVisibility(View.INVISIBLE);
-    }
-
-    /**
-     * Display the badge of friends
+     * Display the badge of friends, if the number is zero, hide the badge
      * @param num the number of friend requests
      */
     public void showFriendsBadge(int num){
         TextView textView = friendsBadge.findViewById(R.id.badge_text);
         if(num>99){
             textView.setText("99+");
+        }else if(num==0){
+            textView.setVisibility(View.INVISIBLE);
         }else{
             textView.setText(String.valueOf(num));
         }
         friendsBadge.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * Hide the badge of friends
-     */
-    public void hideFriendsBadge(){
-        friendsBadge.setVisibility(View.INVISIBLE);
-    }
 }

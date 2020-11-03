@@ -17,6 +17,7 @@ import com.example.comp90018.R;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.dataBean.FriendProfile;
 import com.example.comp90018.utils.DataManager;
+import com.squareup.picasso.Picasso;
 
 public class FriendProfileActivity extends AppCompatActivity {
     //Views
@@ -26,7 +27,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private LinearLayout sendMessageView;
 
     //data
-    private FriendProfile friendProfile;
+    private String friendId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +48,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
     public void initData(){
         Intent intent=getIntent();
-        int friendID=intent.getIntExtra(MainViewActivity.VALUES_FRIEND_ID,0);
-        if(friendID!=0){
-            friendProfile=DataManager.getDataManager(this).getFriendProfile(friendID);
-        }
+        friendId=intent.getStringExtra(MainViewActivity.VALUES_FRIEND_ID);
     }
 
     public void initView(){
@@ -59,8 +57,10 @@ public class FriendProfileActivity extends AppCompatActivity {
         nameText=(TextView)findViewById(R.id.friend_profile_name_text);
         sendMessageView=(LinearLayout)findViewById(R.id.friend_profile_chat);
 
-        imageView.setImageBitmap(this.friendProfile.getImage());
-        nameText.setText(this.friendProfile.getName());
+        final FriendItem friend=DataManager.getDataManager(this).getAFriend(friendId);
+        Picasso.get().load(friend.getImage()).into(imageView);
+
+        nameText.setText(friend.getName());
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +73,7 @@ public class FriendProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(),ChatActivity.class);
-                intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,friendProfile.getID());
+                intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,friend.getID());
                 startActivity(intent);
             }
         });

@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.R;
 import com.example.comp90018.ui.SideIndexBar;
+import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,9 +79,9 @@ public class FriendListAdapter extends RecyclerView.Adapter {
             this.friendItems.add(item);
         }
         for(String index:SideIndexBar.indexs){
-            this.friendItems.add(new FriendItem(-1,null,index,VIEW_HOLEDER_TYPE_INDEX));
+            this.friendItems.add(new FriendItem("",null,index,VIEW_HOLEDER_TYPE_INDEX));
         }
-        this.friendItems.add(new FriendItem(-1,null,null,VIEW_HOLEDER_TYPE_REQUEST));
+        this.friendItems.add(new FriendItem("",null,null,VIEW_HOLEDER_TYPE_REQUEST));
         itemSort();
     }
 
@@ -88,13 +90,16 @@ public class FriendListAdapter extends RecyclerView.Adapter {
             String letterPattern="[a-zA-Z]";
             @Override
             public int compare(FriendItem friendItem, FriendItem t1) {
+
                 if(friendItem.getItemType()==VIEW_HOLEDER_TYPE_REQUEST){
                     return -1;
                 }
                 if(t1.getItemType()==VIEW_HOLEDER_TYPE_REQUEST){
                     return 1;
                 }
-                if(friendItem.getName().charAt(0)==t1.getName().charAt(0) && friendItem.getItemType()!=t1.getItemType()){
+                String str1=friendItem.getName().toUpperCase();
+                String str2=t1.getName().toUpperCase();
+                if(str1.charAt(0)==str2.charAt(0) && friendItem.getItemType()!=t1.getItemType()){
                     if(friendItem.getItemType()==VIEW_HOLEDER_TYPE_INDEX){
                         return -1;
                     }else{
@@ -102,7 +107,8 @@ public class FriendListAdapter extends RecyclerView.Adapter {
                     }
                 }else if(Pattern.matches(letterPattern,friendItem.getName().substring(0,1)) && Pattern.matches(letterPattern,t1.getName().substring(0,1)) ||
                         !Pattern.matches(letterPattern,friendItem.getName().substring(0,1)) && !Pattern.matches(letterPattern,t1.getName().substring(0,1))){
-                    return friendItem.getName().charAt(0)-t1.getName().charAt(0);
+
+                    return str1.compareTo(str2);
                 }else {
                     if(Pattern.matches(letterPattern,friendItem.getName().substring(0,1))){
                         return -1;
@@ -150,7 +156,7 @@ public class FriendListAdapter extends RecyclerView.Adapter {
         }else if(viewType==VIEW_HOLEDER_TYPE_NORMAL){
             FriendItem item = friendItems.get(position);
             ViewHolder myHolder = (ViewHolder) holder;
-            myHolder.imageAvatar.setImageBitmap(item.getImage());
+            Picasso.get().load(item.getImage()).into(myHolder.imageAvatar);
             myHolder.nameText.setText(item.getName());
 
             //Set click listener to each item

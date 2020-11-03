@@ -11,31 +11,31 @@ import java.io.Serializable;
  */
 public class FriendItem {
     //The ID of a friend
-    private int ID;
+    private String ID;
     //The image of a friend
-    private Bitmap image;
+    private String image;
     //The name of a Friend
     private String name;
 
     //The type used to create views, don't set it by yourself
     private int itemType;
 
-    public FriendItem(int ID,Bitmap image,String name){
+    public FriendItem(String ID,String image,String name){
         this.ID=ID;
         this.image=image;
         this.name=name;
         this.itemType= FriendListAdapter.VIEW_HOLEDER_TYPE_NORMAL;
     }
 
-    public FriendItem(int ID,Bitmap image,String name,int itemType){
+    public FriendItem(String ID,String image,String name,int itemType){
         this.ID=ID;
         this.image=image;
         this.name=name;
         this.itemType= itemType;
     }
 
-    public int getID(){return this.ID;}
-    public Bitmap getImage(){
+    public String getID(){return this.ID;}
+    public String getImage(){
         return this.image;
     }
     public String getName(){
