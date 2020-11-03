@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/item_message_image"
-        android:layout_width="@dimen/design_friend_pic_size"
-        android:layout_height="@dimen/design_friend_pic_size"
+        android:layout_width="@dimen/design_pic_size_message"
+        android:layout_height="@dimen/design_pic_size_message"
         android:background="@color/colorBottomNavBack"
         android:contentDescription="@string/description_image_user"
         android:scaleType="fitXY"
@@ -17,20 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="15dp"></ImageView>
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"></ImageView>
 
     <TextView
         android:id="@+id/item_message_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="11dp"
         android:gravity="center"
         android:text="friend's name"
-        app:layout_constraintBottom_toTopOf="@+id/item_message_content"
+        android:textSize="@dimen/design_text_size_message_name"
         app:layout_constraintStart_toEndOf="@+id/item_message_image"
         app:layout_constraintTop_toTopOf="@+id/item_message_image"
-        android:layout_marginLeft="15dp"
-        android:textSize="@dimen/design_item_text_size">
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left">
 
     </TextView>
 
@@ -40,9 +38,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="latest chat content"
-        app:layout_constraintStart_toEndOf="@+id/item_message_image"
-        app:layout_constraintTop_toBottomOf="@id/item_message_name"
-        android:layout_marginLeft="15dp">
+        android:textSize="@dimen/design_text_size_message_content"
+        app:layout_constraintBottom_toBottomOf="@+id/item_message_image"
+        app:layout_constraintStart_toStartOf="@+id/item_message_name"
+        app:layout_constraintTop_toBottomOf="@+id/item_message_name">
 
     </TextView>
 

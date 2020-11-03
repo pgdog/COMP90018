@@ -6,13 +6,13 @@
 
     <Button
         android:id="@+id/edit_name_back_btn"
-        android:layout_width="@dimen/design_back_btn_size"
-        android:layout_height="@dimen/design_back_btn_size"
+        android:layout_width="@dimen/design_title_icon_size"
+        android:layout_height="@dimen/design_title_icon_size"
         android:background="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"></Button>
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"
+        android:layout_marginTop="@dimen/design_title_divider_margin"></Button>
 
     <TextView
         android:id="@+id/textView9"
@@ -27,21 +27,21 @@
 
     <Button
         android:id="@+id/edit_name_done_btn"
-        android:layout_width="@dimen/design_back_btn_size"
-        android:layout_height="@dimen/design_back_btn_size"
+        android:layout_width="@dimen/design_title_icon_size"
+        android:layout_height="@dimen/design_title_icon_size"
         android:background="@drawable/ic_done"
         app:layout_constraintBottom_toBottomOf="@+id/textView9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView9"
-        android:layout_marginRight="15dp"></Button>
+        android:layout_marginRight="@dimen/design_title_icon_margin_left"></Button>
 
     <EditText
         android:id="@+id/edit_name_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
+        android:background="@drawable/shape_border_edit"
         android:text="123"
-        android:textSize="@dimen/design_item_text_size"
+        android:textSize="@dimen/design_text_size_message_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9"

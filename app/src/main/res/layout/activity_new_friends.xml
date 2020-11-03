@@ -8,13 +8,13 @@
 
     <Button
         android:id="@+id/new_friend_back_btn"
-        android:layout_width="@dimen/design_back_btn_size"
-        android:layout_height="@dimen/design_back_btn_size"
+        android:layout_width="@dimen/design_title_icon_size"
+        android:layout_height="@dimen/design_title_icon_size"
         android:background="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="15dp">
+        android:layout_marginTop="@dimen/design_title_divider_margin"
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left">
 
     </Button>
 
@@ -37,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/friends_request_title"
-        android:layout_marginTop="20dp"></TextView>
+        android:layout_marginTop="@dimen/design_title_divider_margin"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/new_friend_recycle_view"

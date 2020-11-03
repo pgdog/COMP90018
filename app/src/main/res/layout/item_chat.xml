@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/item_chat_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/design_pic_size_friend"
+        android:layout_height="@dimen/design_pic_size_friend"
         android:layout_marginLeft="15dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +39,7 @@
             android:background="@drawable/chat_text_background_grey"
             android:gravity="start|center"
             android:text="b33"
-            android:textSize="18dp">
+            android:textSize="@dimen/design_text_size_message_content">
 
         </TextView>
     </RelativeLayout>

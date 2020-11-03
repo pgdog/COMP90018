@@ -9,23 +9,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_friend_title"
+        android:textSize="@dimen/design_title_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/search_friend_back_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp">
+        app:layout_constraintStart_toEndOf="@+id/search_friend_back_btn"
+        app:layout_constraintTop_toTopOf="@+id/search_friend_back_btn"
+        android:layout_marginRight="@dimen/design_title_icon_size">
 
     </TextView>
 
     <Button
         android:id="@+id/search_friend_back_btn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/design_title_icon_size"
+        android:layout_height="@dimen/design_title_icon_size"
         android:background="@drawable/ic_arrow_back"
-        app:layout_constraintBottom_toBottomOf="@+id/search_friend_title_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="10dp"></Button>
+        android:layout_marginTop="@dimen/design_title_divider_margin"
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"></Button>
 
     <TextView
         android:id="@+id/textview10"
@@ -37,42 +38,35 @@
         app:layout_constraintTop_toBottomOf="@+id/search_friend_title_text"
         android:layout_marginTop="20dp"/>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <EditText
+        android:id="@+id/search_friend_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#E1E1E1"
-        android:orientation="horizontal"
+        android:background="@drawable/shape_border_edit"
+        android:hint="@string/add_friend_title_hint"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
+        android:padding="10dp"
+        android:textSize="@dimen/design_title_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textview10">
-
-        <EditText
-            android:id="@+id/search_friend_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:background="@color/colorWhite"
-            android:hint="@string/add_friend_title_hint"
-            android:imeOptions="actionSearch"
-            android:textSize="22dp"></EditText>
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/textview10"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"></EditText>
 
     <TextView
         android:id="@+id/search_friend_result_text"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginTop="20dp"
-        android:background="@color/colorWhite"
+        android:background="@drawable/shape_border_edit"
         android:text="The user doesn't exist"
         android:gravity="center"
-        android:textSize="@dimen/design_item_text_size"
+        android:textSize="@dimen/design_title_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"></TextView>
+        app:layout_constraintTop_toBottomOf="@+id/search_friend_edit_text"></TextView>
 </androidx.constraintlayout.widget.ConstraintLayout>

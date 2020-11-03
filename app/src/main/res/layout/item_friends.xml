@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/color_item_selector">
 
     <ImageView
         android:id="@+id/item_friend_image"
-        android:layout_width="@dimen/design_friend_pic_size"
-        android:layout_height="@dimen/design_friend_pic_size"
+        android:layout_width="@dimen/design_pic_size_friend"
+        android:layout_height="@dimen/design_pic_size_friend"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"></ImageView>
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"
+        android:layout_marginTop="@dimen/design_title_divider_margin"
+        android:layout_marginBottom="@dimen/design_title_divider_margin"></ImageView>
 
     <TextView
         android:id="@+id/item_friend_name"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"
         android:gravity="center|start"
         android:text="Friend's name"
-        android:textSize="@dimen/design_item_text_size"
+        android:textSize="@dimen/design_text_size_message_name"
         app:layout_constraintBottom_toBottomOf="@+id/item_friend_image"
         app:layout_constraintStart_toEndOf="@+id/item_friend_image"
-        app:layout_constraintTop_toTopOf="@id/item_friend_image"></TextView>
+        app:layout_constraintTop_toTopOf="@+id/item_friend_image"></TextView>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginLeft="@dimen/design_divider_line_margin_left"
         android:background="@color/colorBottomNavBack"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/item_friend_image"
-        android:layout_marginTop="15dp"></TextView>
+        app:layout_constraintStart_toStartOf="parent"></TextView>
 </androidx.constraintlayout.widget.ConstraintLayout>

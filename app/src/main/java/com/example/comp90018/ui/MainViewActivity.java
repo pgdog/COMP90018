@@ -89,13 +89,15 @@ public class MainViewActivity extends AppCompatActivity {
         navView = findViewById(R.id.BottomNavigation_message);
 
         //Create all fragments
-        messageFragment=new MessageFragment();
-        friendsFragment=new FriendsFragment();
-        meFragment=new MeFragment();
-        nearbyFragment=new NearbyFragment();
+        if(messageFragment==null){
+            messageFragment=new MessageFragment();
+            friendsFragment=new FriendsFragment();
+            meFragment=new MeFragment();
+            nearbyFragment=new NearbyFragment();
+            //Default: go to the message fragment
+            getSupportFragmentManager().beginTransaction().replace(R.id.myf,messageFragment).commitNow();
+        }
 
-        //Default: go to the message fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.myf,messageFragment).commitNow();
 
         //Listen to the item selected events
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -155,7 +157,6 @@ public class MainViewActivity extends AppCompatActivity {
                     DataManager.getDataManager(getApplicationContext()).setUser(newUser);
                     DataManager.getDataManager(getApplicationContext()).setDatabase(FirebaseDatabase.getInstance());
                     DataManager.getDataManager(getApplicationContext()).setDatabaseReference(databaseReference);
-                    //Initialize view
                     initView();
                     listenDataChanged();
                 }
@@ -249,12 +250,13 @@ public class MainViewActivity extends AppCompatActivity {
         TextView textView = friendsBadge.findViewById(R.id.badge_text);
         if(num>99){
             textView.setText("99+");
+            friendsBadge.setVisibility(View.VISIBLE);
         }else if(num==0){
-            textView.setVisibility(View.INVISIBLE);
+            friendsBadge.setVisibility(View.INVISIBLE);
         }else{
             textView.setText(String.valueOf(num));
+            friendsBadge.setVisibility(View.VISIBLE);
         }
-        friendsBadge.setVisibility(View.VISIBLE);
     }
 
 }

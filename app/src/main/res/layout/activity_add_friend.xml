@@ -8,13 +8,13 @@
 
     <Button
         android:id="@+id/add_friend_back_btn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/design_title_icon_size"
+        android:layout_height="@dimen/design_title_icon_size"
         android:background="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"></Button>
+        android:layout_marginTop="@dimen/design_title_divider_margin"
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"></Button>
 
     <TextView
         android:id="@+id/textview8"
@@ -24,12 +24,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_friend_back_btn"
-        android:layout_marginTop="20dp"></TextView>
+        android:layout_marginTop="@dimen/design_title_divider_margin"></TextView>
 
     <ImageView
         android:id="@+id/add_friend_image"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/design_pic_size_profile"
+        android:layout_height="@dimen/design_pic_size_profile"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,6 +41,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Friend's Nickname"
+        android:textSize="@dimen/design_title_text_size"
         app:layout_constraintBottom_toBottomOf="@+id/add_friend_image"
         app:layout_constraintStart_toEndOf="@+id/add_friend_image"
         app:layout_constraintTop_toTopOf="@+id/add_friend_image"
@@ -74,10 +75,12 @@
 
 
         <TextView
+            android:id="@+id/add_friend_send_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Send Request"></TextView>
+            android:text="Send Request"
+            android:textSize="@dimen/design_text_size_message_name"></TextView>
 
     </LinearLayout>
 
