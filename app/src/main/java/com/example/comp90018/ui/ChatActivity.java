@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.example.comp90018.adapter.ChatListAdapter;
 import com.example.comp90018.dataBean.ChatItem;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.utils.DataManager;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,9 +42,11 @@ public class ChatActivity extends AppCompatActivity {
     private EditText inputText;
     private Button addBtn;
     private Button sendBtn;
+
     private String friendId, userId;
     private String friendPic;
     private String friendName;
+
     DatabaseReference mDatabaseRef;
 
     ChatListAdapter chatListAdapter;
@@ -73,10 +77,12 @@ public class ChatActivity extends AppCompatActivity {
         dataManager = DataManager.getDataManager(this);
         chatItems = new ArrayList<ChatItem>();
         //Get all data here
+
         Intent intent = getIntent();
         friendId = intent.getStringExtra(MainViewActivity.VALUES_FRIEND_ID);
         friendPic = intent.getStringExtra("Picture");
         friendName = intent.getStringExtra("Name");
+
         userId = DataManager.getDataManager(getApplicationContext()).getUser().getID();
         //DataManager.getDataManager(this).createItemsForChat(friendID);
         //DataManager.getDataManager(this).setMessageRead(friendID);
@@ -137,6 +143,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
 
     public void initView() {
         //Create view here
@@ -201,6 +208,7 @@ public class ChatActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 //Check if the friend exist
                 mDatabaseRef.child("users").child(userId).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -388,5 +396,21 @@ public class ChatActivity extends AppCompatActivity {
         String historyKey = mDatabaseRef.child("message").child(friendId).child("history").child(userId).push().getKey();
         mDatabaseRef.child("message").child(friendId).child("history").child(userId).child(historyKey).child("text").setValue(text);
         mDatabaseRef.child("message").child(friendId).child("history").child(userId).child(historyKey).child("date").setValue(String.valueOf(date));
+    }
+
+    public void addToSender(String text){
+        String key = mDatabaseRef.child("message").child(userId).child(friendId).push().getKey();
+        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("text").setValue(text);
+        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("uid").setValue(userId);
+        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("date").setValue(new Date(System.currentTimeMillis()).toString());
+        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("hasRead").setValue("0");
+    }
+
+    public void addToReceiver(String text){
+        String key = mDatabaseRef.child("message").child(friendId).child(userId).push().getKey();
+        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("text").setValue(text);
+        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("uid").setValue(userId);
+        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("date").setValue(new Date(System.currentTimeMillis()).toString());
+        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("hasRead").setValue("0");
     }
 }
