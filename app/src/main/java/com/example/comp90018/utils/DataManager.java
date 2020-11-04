@@ -8,6 +8,7 @@ import com.example.comp90018.dataBean.FriendProfile;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.dataBean.User;
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -54,6 +55,7 @@ public class DataManager {
 
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
+    private Marker userMarker;
 
     private DataManager(){
         messageItems=new ArrayList<>();
@@ -189,12 +191,20 @@ public class DataManager {
         this.databaseReference = databaseReference;
     }
 
+    public void setMarker(Marker marker){
+        this.userMarker = marker;
+    }
+
     public FirebaseDatabase getDatabase() {
         return database;
     }
 
     public DatabaseReference getDatabaseReference() {
         return databaseReference;
+    }
+
+    public Marker getUserMarker(){
+        return this.userMarker;
     }
 
     public static DataManager getDataManager(Context context){
