@@ -8,26 +8,29 @@ import java.util.Date;
  * The item of message record list
  */
 public class ChatItem {
+    //The id of a user
+    private String id;
     //The image of a user
-    private Bitmap image;
+    private String image;
     //A message record text
     private String text;
     //Whether this message is from the user himself,
     //if so, the view will use different structure
     private boolean isSelf;
-    //The date of a message record, used for sort
-    private Date date;
+    //The time millis of a message record, used for sort
+    private long date;
 
     public ChatItem(){}
 
-    public ChatItem(Bitmap image, String text, boolean isSelf,Date date){
+    public ChatItem(String id, String image, String text, boolean isSelf,long date){
+        this.id=id;
         this.image=image;
         this.text=text;
         this.isSelf=isSelf;
         this.date=date;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -39,11 +42,19 @@ public class ChatItem {
         isSelf = self;
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
-    public Bitmap getImage(){
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getImage(){
         return this.image;
     }
     public String getText(){
@@ -52,5 +63,5 @@ public class ChatItem {
     public boolean isSelf(){
         return this.isSelf;
     }
-    public Date getDate(){return this.date;}
+    public long getDate(){return this.date;}
 }

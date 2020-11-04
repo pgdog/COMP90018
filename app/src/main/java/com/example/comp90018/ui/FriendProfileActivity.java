@@ -1,11 +1,10 @@
 package com.example.comp90018.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,12 +16,11 @@ import android.widget.TextView;
 
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.FriendItem;
-import com.example.comp90018.dataBean.FriendProfile;
+import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.utils.DataManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -38,6 +36,10 @@ public class FriendProfileActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     //data
     private String friendId;
+
+    private boolean messageChanged=false;
+
+    private static final int REQUEST_CODE_TO_CHAT=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +80,10 @@ public class FriendProfileActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(messageChanged){
+                    setResult(MainViewActivity.RESULT_CODE_FROM_CHAT_MESSAGE_CHANGED);
+                }
+                messageChanged=false;
                 finish();
             }
         });
@@ -87,7 +93,9 @@ public class FriendProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent=new Intent(getApplicationContext(),ChatActivity.class);
                 intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,friend.getID());
-                startActivity(intent);
+                intent.putExtra("Picture",friend.getImage());
+                intent.putExtra("Name",friend.getName());
+                startActivityForResult(intent,REQUEST_CODE_TO_CHAT);
             }
         });
 
@@ -109,51 +117,9 @@ public class FriendProfileActivity extends AppCompatActivity {
         deleteFriendView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Delete the friend from local
-                for(FriendItem item:dataManager.getFriendItems()){
-                    if(item.getID().equals(friendId)){
-                        dataManager.getFriendItems().remove(item);
-                        break;
-                    }
-                }
+                deleteFriend();
 
-                //Delte the friend from firebase
-                //delete current user from friend list of target user
-                databaseReference.child("users").child(friendId).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot postSnapShot : snapshot.getChildren()) {
-                            //check if the searched user is friend of current user
-                            if(dataManager.getUser().getID().equals((String)postSnapShot.getValue())){
-                                postSnapShot.getRef().setValue(null);
-                                Log.i("delete result (1)", "delete from target user complete");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-                //delete target user from friend list of current user
-                databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot postSnapShot : snapshot.getChildren()) {
-                            //check if the searched user is friend of current user
-                            if(friendId.equals((String)postSnapShot.getValue())){
-                                postSnapShot.getRef().setValue(null);
-                                Log.i("delete result (2)", "delete from current user complete");
-                            }
-
-                        }
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
-                setResult(FriendsFragment.CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED);
+                setResult(MainViewActivity.RESULT_CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED);
                 finish();
             }
         });
@@ -172,5 +138,108 @@ public class FriendProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==REQUEST_CODE_TO_CHAT && resultCode==MainViewActivity.RESULT_CODE_FROM_CHAT_MESSAGE_CHANGED){
+            messageChanged=true;
+        }
+    }
+
+    public void deleteFriend(){
+        //Delete the friend from local
+        for(FriendItem item:dataManager.getFriendItems()){
+            if(item.getID().equals(friendId)){
+                dataManager.getFriendItems().remove(item);
+                break;
+            }
+        }
+
+        //Delete the local chat records
+        for(MessageItem messageItem:dataManager.getMessageItems()){
+            if(messageItem.getID().equals(friendId)){
+                dataManager.getMessageItems().remove(messageItem);
+                break;
+            }
+        }
+
+        //Delte the friend from firebase
+        //delete current user from friend list of target user
+        databaseReference.child("users").child(friendId).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                    //check if the searched user is friend of current user
+                    if(dataManager.getUser().getID().equals((String)postSnapShot.getValue())){
+                        postSnapShot.getRef().setValue(null);
+                        Log.i("delete result (1)", "delete from target user complete");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        //delete target user from friend list of current user
+        databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                    //check if the searched user is friend of current user
+                    if(friendId.equals((String)postSnapShot.getValue())){
+                        postSnapShot.getRef().setValue(null);
+                        Log.i("delete result (2)", "delete from current user complete");
+                    }
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        //delete message history
+        databaseReference.child("message").child(dataManager.getUser().getID()).child("unread").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    if(dataSnapshot.child("from").equals(friendId)){
+                        dataSnapshot.getRef().setValue(null);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        databaseReference.child("message").child(dataManager.getUser().getID()).child("history").child(friendId).setValue(null);
+
+        databaseReference.child("chat").child(dataManager.getUser().getID()).child(friendId).setValue(null);
+
+        //delete friend's message history
+        databaseReference.child("message").child(friendId).child("unread").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    if(dataSnapshot.child("from").equals(dataManager.getUser().getID())){
+                        dataSnapshot.getRef().setValue(null);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        databaseReference.child("message").child(friendId).child("history").child(dataManager.getUser().getID()).setValue(null);
+
+        databaseReference.child("chat").child(friendId).child(dataManager.getUser().getID()).setValue(null);
+
     }
 }
