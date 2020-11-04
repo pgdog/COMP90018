@@ -18,12 +18,25 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/item_chat_time_text" />
 
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/item_chat_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time"
+        android:textColor="@color/colorBottomNavBack"
+        android:textSize="@dimen/design_text_size_message_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
     <RelativeLayout
         android:id="@+id/item_chat_text_layout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="70dp"
         android:orientation="horizontal"
@@ -42,6 +55,8 @@
             android:textSize="@dimen/design_text_size_message_content">
 
         </TextView>
+
+
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,17 +41,11 @@ public class FriendsFragment extends Fragment {
     private FriendListAdapter friendListAdapter;
 
 
-    public static int CODE_TO_NEW_FRIEND=1;
-    public static int CODE_TO_FRIEND_PROFILE=2;
-    public static int CODE_TO_SEARCH_FRIEND=3;
-    public static int CODE_FROM_NEW_FRIEND_REQUEST_CHANGED =11;
-    public static int CODE_FROM_NEW_FRIEND_FRIEND_CHANGED=12;
-    public static int CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED=21;
-    public static int CODE_FROM_SEARCH_FRIEND_FRIEND_CHANGED=31;
-
     private DataManager dataManager;
     private DatabaseReference databaseReference;
 
+    private boolean dataReady;
+    private boolean viewReady;
     //data
     List<String> friendIds; //The user's id of friend
 
@@ -73,17 +67,21 @@ public class FriendsFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_friends, container, false);
 
-        //Initialize view
-        initView();
-
+        if(dataReady){
+            //Initialize view
+            initView();
+        }
+        viewReady=true;
 
         return view;
     }
 
     public void initData(){
+        dataReady=false;
+        viewReady=false;
         dataManager=DataManager.getDataManager(getActivity());
         databaseReference=dataManager.getDatabaseReference();
-        //Listen to the friend changed in firebase
+        //Get friends
         databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -106,7 +104,10 @@ public class FriendsFragment extends Fragment {
                             }
                         }
                         dataManager.setFriendItems(friendItems);
-                        initView();
+                        dataReady=true;
+                        if(viewReady){
+                            initView();
+                        }
                     }
 
                     @Override
@@ -138,7 +139,7 @@ public class FriendsFragment extends Fragment {
             public void onClick(View view) {
                 //Go to the search activity
                 Intent intent=new Intent(getActivity().getApplicationContext(), SearchActivity.class);
-                startActivityForResult(intent,CODE_TO_SEARCH_FRIEND);
+                getActivity().startActivityForResult(intent,MainViewActivity.REQUEST_CODE_FROM_FRIEND_TO_SEARCH);
             }
         });
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
@@ -153,11 +154,11 @@ public class FriendsFragment extends Fragment {
                     //Go to the friend's profile activity
                     Intent intent=new Intent(getActivity().getApplicationContext(),FriendProfileActivity.class);
                     intent.putExtra(MainViewActivity.VALUES_FRIEND_ID,item.getID());
-                    startActivityForResult(intent,CODE_TO_FRIEND_PROFILE);
+                    getActivity().startActivityForResult(intent,MainViewActivity.REQUEST_CODE_FROM_FRIEND_TO_PROFILE);
                 }else if(item.getItemType()==FriendListAdapter.VIEW_HOLEDER_TYPE_REQUEST){
                     //Go to the new friend activity
                     Intent intent=new Intent(getActivity().getApplicationContext(),NewFriendsActivity.class);
-                    startActivityForResult(intent,CODE_TO_NEW_FRIEND);
+                    getActivity().startActivityForResult(intent,MainViewActivity.REQUEST_CODE_FROM_FRIEND_TO_NEW_FRIEND);
                 }
 
             }
@@ -200,20 +201,8 @@ public class FriendsFragment extends Fragment {
         friendListAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==CODE_TO_NEW_FRIEND && resultCode== CODE_FROM_NEW_FRIEND_REQUEST_CHANGED){
-            showRequestNumText(DataManager.getDataManager(getActivity()).getNewFriendItems().size());
-        }
-        if(requestCode==CODE_TO_NEW_FRIEND && resultCode==CODE_FROM_NEW_FRIEND_FRIEND_CHANGED){
-            initView();
-        }
-        if(requestCode==CODE_TO_FRIEND_PROFILE && resultCode==CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED){
-            initView();
-        }
-        if(requestCode==CODE_TO_SEARCH_FRIEND && resultCode==CODE_FROM_SEARCH_FRIEND_FRIEND_CHANGED){
-            initView();
-        }
+    public void updateListView(){
+        initView();
     }
+
 }

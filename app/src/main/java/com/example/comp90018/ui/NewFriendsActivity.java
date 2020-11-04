@@ -73,10 +73,10 @@ public class NewFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(isRequestChanged){
-                    setResult(FriendsFragment.CODE_FROM_NEW_FRIEND_REQUEST_CHANGED);
+                    setResult(MainViewActivity.RESULT_CODE_FROM_NEW_FRIEND_REQUEST_CHANGED);
                 }
                 if(isFriendChanged){
-                    setResult(FriendsFragment.CODE_FROM_NEW_FRIEND_FRIEND_CHANGED);
+                    setResult(MainViewActivity.RESULT_CODE_FROM_NEW_FRIEND_FRIEND_CHANGED);
                 }
                 finish();
             }
