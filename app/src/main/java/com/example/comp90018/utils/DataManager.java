@@ -8,6 +8,7 @@ import com.example.comp90018.dataBean.FriendProfile;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.dataBean.User;
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -42,6 +43,8 @@ public class DataManager {
     private boolean isLocalRequestChanged;
     private boolean isLocalFriendChanged;
 
+    private Marker userMarker;
+
 
 
     private FirebaseDatabase database;
@@ -54,6 +57,7 @@ public class DataManager {
         newFriendItems=new ArrayList<>();
         isLocalRequestChanged =false;
         isLocalFriendChanged = false;
+        userMarker = null;
     }
 
     public boolean isLocalFriendChanged() {
@@ -206,6 +210,10 @@ public class DataManager {
     public DatabaseReference getDatabaseReference() {
         return databaseReference;
     }
+
+    public void setMarker(Marker marker){this.userMarker = marker;}
+
+    public Marker getUserMarker(){return this.userMarker;}
 
     public static DataManager getDataManager(Context context){
         if(dataManager == null){

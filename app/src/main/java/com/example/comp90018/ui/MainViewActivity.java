@@ -1,7 +1,14 @@
 package com.example.comp90018.ui;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.comp90018.MainActivity;
+import com.example.comp90018.MapsFragment;
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.dataBean.NewFriendItem;
@@ -27,6 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +54,7 @@ public class MainViewActivity extends AppCompatActivity {
     private MessageFragment messageFragment;
     private FriendsFragment friendsFragment;
     private MeFragment meFragment;
-    private NearbyFragment nearbyFragment;
+    private MapsFragment nearbyFragment;
 
     //Some static value for transfer values between activitys
     public static final String VALUES_FRIEND_ID="FriendID";
@@ -92,7 +102,7 @@ public class MainViewActivity extends AppCompatActivity {
         messageFragment=new MessageFragment();
         friendsFragment=new FriendsFragment();
         meFragment=new MeFragment();
-        nearbyFragment=new NearbyFragment();
+        nearbyFragment=new MapsFragment();
 
         //Default: go to the message fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.myf,messageFragment).commitNow();
@@ -256,5 +266,6 @@ public class MainViewActivity extends AppCompatActivity {
         }
         friendsBadge.setVisibility(View.VISIBLE);
     }
+
 
 }
