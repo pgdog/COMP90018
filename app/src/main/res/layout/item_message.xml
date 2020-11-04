@@ -23,7 +23,7 @@
         android:id="@+id/item_message_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center|start"
         android:text="friend's name"
         android:textSize="@dimen/design_text_size_message_name"
         app:layout_constraintStart_toEndOf="@+id/item_message_image"
@@ -34,17 +34,31 @@
 
     <TextView
         android:id="@+id/item_message_content"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center|start"
         android:text="latest chat content"
         android:textSize="@dimen/design_text_size_message_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/colorBottomNavBack"
         app:layout_constraintBottom_toBottomOf="@+id/item_message_image"
         app:layout_constraintStart_toStartOf="@+id/item_message_name"
         app:layout_constraintTop_toBottomOf="@+id/item_message_name">
 
     </TextView>
 
+    <TextView
+        android:id="@+id/item_message_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time"
+        android:textColor="@color/colorBottomNavBack"
+        android:textSize="@dimen/design_text_size_message_content"
+        app:layout_constraintBottom_toBottomOf="@+id/item_message_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/item_message_name"
+        android:layout_marginRight="15dp"></TextView>
     <TextView
         android:id="@+id/textView2"
         android:layout_width="0dp"

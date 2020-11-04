@@ -43,6 +43,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private boolean friendChanged;
 
+    private static int REQUEST_CODE_TO_PROFILE=1;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +73,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(friendChanged){
-                    setResult(FriendsFragment.CODE_FROM_SEARCH_FRIEND_FRIEND_CHANGED);
+                    setResult(MainViewActivity.RESULT_CODE_FROM_SEARCH_FRIEND_FRIEND_CHANGED);
                 }
                 finish();
             }
@@ -127,7 +129,7 @@ public class SearchActivity extends AppCompatActivity {
                                 //The friend already exist
                                 Intent intent = new Intent(getApplicationContext(), FriendProfileActivity.class);
                                 intent.putExtra(MainViewActivity.VALUES_FRIEND_ID, searchUID);
-                                startActivityForResult(intent,FriendsFragment.CODE_TO_FRIEND_PROFILE);
+                                startActivityForResult(intent,REQUEST_CODE_TO_PROFILE);
                             } else {
                                 //after getting uid, get the pending statues of the searched user
                                 databaseReference.child("request").child(searchUID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -176,7 +178,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==FriendsFragment.CODE_TO_FRIEND_PROFILE &&resultCode==FriendsFragment.CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED){
+        if(requestCode==REQUEST_CODE_TO_PROFILE &&resultCode==MainViewActivity.RESULT_CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED){
             friendChanged=true;
         }
     }
