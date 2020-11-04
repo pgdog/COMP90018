@@ -4,12 +4,20 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="design_bottom_navigation_text_size" tools:override="true">14sp</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">14sp</dimen>
-    <dimen name="design_friend_pic_size">50dp</dimen>
     <dimen name="design_divider_line_margin_left">70dp</dimen>
-    <dimen name="design_item_text_size">20dp</dimen>
     <dimen name="design_title_text_size">22dp</dimen>
-    <dimen name="design_back_btn_size">30dp</dimen>
+    <dimen name="design_title_icon_size">30dp</dimen>
     <dimen name="design_home_icon_size">25dp</dimen>
+    <dimen name="design_title_divider_margin">20dp</dimen>
+    <dimen name="design_title_icon_margin_left">15dp</dimen>
+    <dimen name="design_pic_size_message">50dp</dimen>
+    <dimen name="design_pic_size_friend">40dp</dimen>
+    <dimen name="design_pic_size_profile">60dp</dimen>
+    <dimen name="design_pic_size_item_icon">20dp</dimen>
+    <dimen name="design_text_size_message_name">20dp</dimen>
+    <dimen name="design_text_size_message_content">19dp</dimen>
+    <dimen name="design_text_size_profile_name">25dp</dimen>
+    <dimen name="design_item_padding">5dp</dimen>
     <!--
     Because the window insets on round devices are larger than 15dp, this padding only applies
     to square screens.

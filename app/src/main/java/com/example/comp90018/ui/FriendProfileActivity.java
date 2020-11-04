@@ -1,5 +1,6 @@
 package com.example.comp90018.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -18,6 +19,11 @@ import com.example.comp90018.R;
 import com.example.comp90018.dataBean.FriendItem;
 import com.example.comp90018.dataBean.FriendProfile;
 import com.example.comp90018.utils.DataManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class FriendProfileActivity extends AppCompatActivity {
@@ -28,6 +34,8 @@ public class FriendProfileActivity extends AppCompatActivity {
     private LinearLayout sendMessageView;
     private LinearLayout deleteFriendView;
 
+    private DataManager dataManager;
+    private DatabaseReference databaseReference;
     //data
     private String friendId;
     @Override
@@ -49,6 +57,8 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     public void initData(){
+        dataManager=DataManager.getDataManager(this);
+        databaseReference=dataManager.getDatabaseReference();
         Intent intent=getIntent();
         friendId=intent.getStringExtra(MainViewActivity.VALUES_FRIEND_ID);
     }
@@ -99,7 +109,52 @@ public class FriendProfileActivity extends AppCompatActivity {
         deleteFriendView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Delete the friend from local
+                for(FriendItem item:dataManager.getFriendItems()){
+                    if(item.getID().equals(friendId)){
+                        dataManager.getFriendItems().remove(item);
+                        break;
+                    }
+                }
 
+                //Delte the friend from firebase
+                //delete current user from friend list of target user
+                databaseReference.child("users").child(friendId).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                            //check if the searched user is friend of current user
+                            if(dataManager.getUser().getID().equals((String)postSnapShot.getValue())){
+                                postSnapShot.getRef().setValue(null);
+                                Log.i("delete result (1)", "delete from target user complete");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                //delete target user from friend list of current user
+                databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot postSnapShot : snapshot.getChildren()) {
+                            //check if the searched user is friend of current user
+                            if(friendId.equals((String)postSnapShot.getValue())){
+                                postSnapShot.getRef().setValue(null);
+                                Log.i("delete result (2)", "delete from current user complete");
+                            }
+
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+                setResult(FriendsFragment.CODE_FROM_FRIEND_PROFILE_FRIEND_CHANGED);
+                finish();
             }
         });
 

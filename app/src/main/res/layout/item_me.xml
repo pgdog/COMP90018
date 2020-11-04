@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/item_me_image"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/design_pic_size_item_icon"
+        android:layout_height="@dimen/design_pic_size_item_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="5dp"></ImageView>
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"
+        android:layout_marginTop="@dimen/design_title_icon_margin_left"
+        android:layout_marginBottom="@dimen/design_title_icon_margin_left"></ImageView>
 
     <TextView
         android:id="@+id/item_me_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Item Name"
-        android:textSize="@dimen/design_item_text_size"
+        android:textSize="@dimen/design_text_size_message_name"
         app:layout_constraintBottom_toBottomOf="@+id/item_me_image"
         app:layout_constraintStart_toEndOf="@+id/item_me_image"
         app:layout_constraintTop_toTopOf="@+id/item_me_image"
@@ -29,11 +31,10 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/colorBottomNavBack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/item_me_image"
-        android:layout_marginTop="5dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginRight="15dp"></TextView>
+        android:layout_marginRight="15dp"
+        android:background="@color/colorBottomNavBack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"></TextView>
 </androidx.constraintlayout.widget.ConstraintLayout>

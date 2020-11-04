@@ -8,9 +8,9 @@
 
     <ImageView
         android:id="@+id/item_friend_request_ic"
-        android:layout_width="@dimen/design_friend_pic_size"
-        android:layout_height="@dimen/design_friend_pic_size"
-        android:layout_marginLeft="15dp"
+        android:layout_width="@dimen/design_pic_size_friend"
+        android:layout_height="@dimen/design_pic_size_friend"
+        android:layout_marginLeft="@dimen/design_title_icon_margin_left"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/ic_friend_requests"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/friends_request_text"
-        android:textSize="@dimen/design_item_text_size"
+        android:textSize="@dimen/design_text_size_message_name"
         android:layout_marginLeft="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/item_friend_request_ic"
         app:layout_constraintStart_toEndOf="@+id/item_friend_request_ic"

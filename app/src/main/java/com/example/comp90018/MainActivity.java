@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.i("Login result", "signInWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "login fail! Email or password is incorrect",
                                     Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.INVISIBLE);
                             login.setText("login");
                             login.setEnabled(true);
                         }
