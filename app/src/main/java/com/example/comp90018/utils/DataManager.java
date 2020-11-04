@@ -8,12 +8,16 @@ import com.example.comp90018.dataBean.FriendProfile;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.dataBean.User;
-import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * A data manager for all data operations
@@ -43,7 +47,8 @@ public class DataManager {
     private boolean isLocalRequestChanged;
     private boolean isLocalFriendChanged;
 
-    private Marker userMarker;
+    //Date format
+    public static final DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
 
@@ -57,9 +62,20 @@ public class DataManager {
         newFriendItems=new ArrayList<>();
         isLocalRequestChanged =false;
         isLocalFriendChanged = false;
-        userMarker = null;
     }
 
+    public String dateToString(Date date){
+        return dateFormat.format(date);
+    }
+
+    public Date stringToDate(String str) {
+        try {
+            return dateFormat.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public boolean isLocalFriendChanged() {
         return isLocalFriendChanged;
     }
@@ -75,6 +91,7 @@ public class DataManager {
     public void setLocalRequestChanged(boolean localRequestChanged) {
         isLocalRequestChanged = localRequestChanged;
     }
+
 
     /**
      * Set the user's information, need a "User"
@@ -105,17 +122,7 @@ public class DataManager {
     public List<MessageItem> getMessageItems(){
         return this.messageItems;
     }
-    /**
-     * Create items for message fragment, seed details in the "MessageItem" class
-     */
-    public void createItemsForMessage(){
-        //According to the user's ID, get all recent messages from database
-        //Create a List of MessageItem and use setMessageItems function to set it
-        //See MessageItem details in the "MessageItem" class
-        String userID=user.getID();
 
-        setMessageItems(TestData.getTestData(context).testMessageItem);//The data only used for test, don't use it for the final version
-    }
 
     public List<ChatItem> getChatItems(){
         return this.chatItems;
@@ -124,28 +131,7 @@ public class DataManager {
     public void setChatItems(List<ChatItem> chatItems){
         this.chatItems=chatItems;
     }
-    /**
-     * Create items for message fragment, seed details in the "ChatItem" class
-     * @param friendID the ID of a friend
-     */
-    public void createItemsForChat(int friendID){
-        //According to the user's ID and the friend's ID, get all message records from database
-        //Create a List of ChatItem and use setChatItems function to set it
-        //See ChatItem details in the "ChatItem" class
-        String userID=user.getID();
 
-        setChatItems(TestData.getTestData(context).testChatItem);//The data only used for test, don't use it for the final version
-    }
-
-    /**
-     * According the user's ID and a friend's ID, tell server to set all the messages' status not unread
-     * @param friendID
-     */
-    public void setMessageRead(int friendID){
-        String userID=user.getID();
-
-        //Need to be implemented here
-    }
 
     public void setFriendItems(List<FriendItem> friendItems){
         this.friendItems=friendItems;
@@ -210,10 +196,6 @@ public class DataManager {
     public DatabaseReference getDatabaseReference() {
         return databaseReference;
     }
-
-    public void setMarker(Marker marker){this.userMarker = marker;}
-
-    public Marker getUserMarker(){return this.userMarker;}
 
     public static DataManager getDataManager(Context context){
         if(dataManager == null){

@@ -76,6 +76,7 @@
         android:textSize="25dp"
         android:textColor="@color/colorWhite"
         android:gravity="center"
+        android:visibility="invisible"
         android:background="@drawable/shape_circle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
