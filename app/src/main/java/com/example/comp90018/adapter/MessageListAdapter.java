@@ -30,6 +30,8 @@ import org.w3c.dom.Text;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -94,8 +96,23 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
 
     public MessageListAdapter(List<MessageItem> messageItems) {
         this.messageItems = messageItems;
+        sortItem();
     }
 
+    public void sortItem(){
+        Collections.sort(messageItems, new Comparator<MessageItem>() {
+            @Override
+            public int compare(MessageItem messageItem, MessageItem t1) {
+                if(messageItem.getLastMessageDate()==t1.getLastMessageDate()){
+                    return 0;
+                }else if(messageItem.getLastMessageDate()>t1.getLastMessageDate()){
+                    return -1;
+                }else{
+                    return 1;
+                }
+            }
+        });
+    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_HOLEDER_TYPE_NORMAL) {
