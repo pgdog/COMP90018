@@ -25,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
         TextView nameText;
         TextView contentText;
         TextView timeText;
+        TextView badgeText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +74,7 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
             nameText = (TextView) itemView.findViewById(R.id.item_message_name);
             contentText = (TextView) itemView.findViewById(R.id.item_message_content);
             timeText = (TextView) itemView.findViewById(R.id.item_message_time_text);
+            badgeText=(TextView)itemView.findViewById(R.id.item_message_badge_text);
         }
     }
 
@@ -113,6 +117,14 @@ public class MessageListAdapter extends RecyclerView.Adapter implements RecycleI
             myHolder.nameText.setText(item.getName());
             myHolder.contentText.setText(item.getLastMessage());
             myHolder.timeText.setText(transformDate(item.getLastMessageDate()));
+            myHolder.timeText.setVisibility(View.VISIBLE);
+            if(item.getNumOfUnread()==0){
+                myHolder.badgeText.setVisibility(View.GONE);
+            }else{
+                myHolder.badgeText.setText(String.valueOf(item.getNumOfUnread()));
+                myHolder.badgeText.setVisibility(View.VISIBLE);
+            }
+
             //Set click listener to each item
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 

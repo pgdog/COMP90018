@@ -136,6 +136,7 @@ public class ChatListAdapter extends RecyclerView.Adapter {
 
     public void addItem(ChatItem item){
         chatItems.add(item);
+        notifyDataSetChanged();
     }
 
     public String transformDate(long date) {

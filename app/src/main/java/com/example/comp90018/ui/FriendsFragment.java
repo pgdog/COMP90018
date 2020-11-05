@@ -18,7 +18,9 @@ import android.widget.TextView;
 import com.example.comp90018.R;
 import com.example.comp90018.adapter.FriendListAdapter;
 import com.example.comp90018.dataBean.FriendItem;
+import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.utils.DataManager;
+import com.example.comp90018.utils.FirebaseManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,6 +51,8 @@ public class FriendsFragment extends Fragment {
     //data
     List<String> friendIds; //The user's id of friend
 
+    private List<String> requestIds;
+
     public FriendsFragment() {
         // Required empty public constructor
     }
@@ -70,6 +74,7 @@ public class FriendsFragment extends Fragment {
         if(dataReady){
             //Initialize view
             initView();
+            listenRequestDataChanged();
         }
         viewReady=true;
 
@@ -81,10 +86,15 @@ public class FriendsFragment extends Fragment {
         viewReady=false;
         dataManager=DataManager.getDataManager(getActivity());
         databaseReference=dataManager.getDatabaseReference();
-        //Get friends
-        databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+        //Get friends and listener for the change
+        FirebaseManager.getFirebaseManager().setFriendListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(MainViewActivity.isLocalFriendChanged){
+                    MainViewActivity.isLocalFriendChanged=false;
+                    initView();
+                    return;
+                }
                 //Get all friend's id
                 friendIds=new ArrayList<String>();
                 for(DataSnapshot postSnapShot: snapshot.getChildren()){
@@ -107,6 +117,7 @@ public class FriendsFragment extends Fragment {
                         dataReady=true;
                         if(viewReady){
                             initView();
+                            listenRequestDataChanged();
                         }
                     }
 
@@ -122,6 +133,7 @@ public class FriendsFragment extends Fragment {
 
             }
         });
+        databaseReference.child("users").child(dataManager.getUser().getID()).child("friends").addValueEventListener(FirebaseManager.getFirebaseManager().getFriendListener());
     }
 
     public void initView(){
@@ -191,6 +203,55 @@ public class FriendsFragment extends Fragment {
         showRequestNumText(DataManager.getDataManager(getActivity()).getNewFriendItems().size());
     }
 
+    public void listenRequestDataChanged() {
+        //Listen to the request changed
+        FirebaseManager.getFirebaseManager().setFriendRequestListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (dataManager.isLocalRequestChanged()) {
+                    showRequestNumText(dataManager.getNewFriendItems().size());
+                    return;
+                }
+                //Get all request
+                requestIds = new ArrayList<String>();
+                for (DataSnapshot postSnapShot : snapshot.getChildren()) {
+                    requestIds.add((String) postSnapShot.getValue());
+                }
+
+                //Get the information of user whose id is in requests
+                databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<NewFriendItem> friendRequests = new ArrayList<NewFriendItem>();
+                        for (DataSnapshot postSnapShot : snapshot.getChildren()) {
+                            //if uid of this user appear in the friendRequestUid arraylist,
+                            //then add all related info into friendRequests
+                            if (requestIds.contains((String) postSnapShot.child("uid").getValue())) {
+                                NewFriendItem friendItem = new NewFriendItem();
+                                friendItem.setID((String) postSnapShot.child("uid").getValue());
+                                friendItem.setImage((String) postSnapShot.child("photo").getValue());
+                                friendItem.setName((String) postSnapShot.child("username").getValue());
+                                friendRequests.add(friendItem);
+                            }
+                        }
+                        dataManager.setNewFriendItems(friendRequests);
+                        showRequestNumText(dataManager.getNewFriendItems().size());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        databaseReference.child("request").child(dataManager.getUser().getID()).addValueEventListener(FirebaseManager.getFirebaseManager().getFriendRequestListener());
+    }
 
     /**
      * Display the TextView of request num with a number, if the num is zero, hide it.
@@ -202,7 +263,11 @@ public class FriendsFragment extends Fragment {
     }
 
     public void updateListView(){
-        initView();
+        friendListAdapter.notifyDataSetChanged();
+    }
+
+    public void updateFriendList(){
+        friendListAdapter.notifyDataSetChanged();
     }
 
 }

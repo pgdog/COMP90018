@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:drawable="@color/color_item_selector">
+
 
     <ImageView
         android:id="@+id/item_message_image"
@@ -19,6 +21,22 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="@dimen/design_title_icon_margin_left"></ImageView>
 
+    <TextView
+        android:visibility="invisible"
+        android:id="@+id/item_message_badge_text"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/style_menu_badge"
+        android:gravity="center"
+        android:text="99+"
+        android:textColor="@color/colorWhite"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_message_name"
+        app:layout_constraintEnd_toStartOf="@+id/item_message_name"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
     <TextView
         android:id="@+id/item_message_name"
         android:layout_width="wrap_content"
@@ -49,6 +67,7 @@
     </TextView>
 
     <TextView
+        android:visibility="invisible"
         android:id="@+id/item_message_time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

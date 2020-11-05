@@ -53,7 +53,6 @@ public class ChatActivity extends AppCompatActivity {
     private Button sendBtn;
     private String friendId, userId;
 
-
     private String friendPic;
     private String friendName;
 
@@ -64,6 +63,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private DataManager dataManager;
     private List<ChatItem> chatItems;
+
+    private ValueEventListener userHistoryListener;
 
     private boolean isFirstListen=true;
     private boolean haveNewMessage=false;
@@ -86,7 +87,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public void initData() {
         dataManager = DataManager.getDataManager(this);
-        chatItems = new ArrayList<ChatItem>();
+
         //Get all data here
 
         Intent intent = getIntent();
@@ -107,8 +108,11 @@ public class ChatActivity extends AppCompatActivity {
         mDatabaseRef.child("message").child(userId).child("history").child(friendId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                chatItems = new ArrayList<ChatItem>();
+                isFirstListen=true;
                 //Get the message send by the friend
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
                     ChatItem item = new ChatItem();
                     item.setId(friendId);
                     item.setSelf(false);
@@ -137,6 +141,8 @@ public class ChatActivity extends AppCompatActivity {
                         initView();
                         //Delete the unreade message from the friend
                         deleteUnreadMessage();
+
+
                         //Listen the new message
                         listenTheChat();
                     }
@@ -179,6 +185,8 @@ public class ChatActivity extends AppCompatActivity {
                 if(haveNewMessage){
                     setResult(MainViewActivity.RESULT_CODE_FROM_CHAT_MESSAGE_CHANGED);
                 }
+                mDatabaseRef.child("message").child(userId).child("history").child(friendId).removeEventListener(userHistoryListener);
+                userHistoryListener=null;
                 finish();
             }
         });
@@ -252,7 +260,7 @@ public class ChatActivity extends AppCompatActivity {
                         if(friendFound){
                             haveNewMessage=true;
                             String text = inputText.getText().toString();
-                            ChatItem item=addDataToList(text, true);
+                            ChatItem item=addDataToList(text, true,System.currentTimeMillis());
                             addToReceiver(text,item.getDate());
                             addToRencentChatList(text,item.getDate());
                             addToFirebaseRencentChat(text,item.getDate());
@@ -262,7 +270,6 @@ public class ChatActivity extends AppCompatActivity {
                             InputMethodManager manager = ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE));
                             if (manager != null)
                                 manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                            updateListView();
                         }else{
                             Toast.makeText(getApplicationContext(), "This user is not your friend, can't send message to him.",
                                     Toast.LENGTH_SHORT).show();
@@ -310,6 +317,16 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void deleteUnreadMessage(){
+        //Delete it form local
+        for(MessageItem messageItem:dataManager.getMessageItems()){
+            if(messageItem.getID().equals(friendId)){
+                messageItem.setNumOfUnread(0);
+                MessageFragment.unreadChanged=true;
+                break;
+            }
+        }
+
+        //Delete it from firebase
         mDatabaseRef.child("message").child(userId).child("unread").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -335,12 +352,12 @@ public class ChatActivity extends AppCompatActivity {
      * @param isSelf whether the text is from the user
      * @return the data of ChatItem
      */
-    public ChatItem addDataToList(String text, boolean isSelf) {
+    public ChatItem addDataToList(String text, boolean isSelf,Long date) {
         ChatItem item = new ChatItem();
         item.setText(text);
         item.setSelf(isSelf);
 
-        item.setDate(System.currentTimeMillis());
+        item.setDate(date);
         if (isSelf) {
             //The text is from the user, add his id and picture
             item.setId(userId);
@@ -372,7 +389,11 @@ public class ChatActivity extends AppCompatActivity {
 //    }
 
     public void listenTheChat() {
-        mDatabaseRef.child("message").child(userId).child("history").child(friendId).addValueEventListener(new ValueEventListener() {
+        if(userHistoryListener!=null){
+            mDatabaseRef.child("message").child(userId).child("history").child(friendId).removeEventListener(userHistoryListener);
+            userHistoryListener=null;
+        }
+        userHistoryListener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(isFirstListen){
@@ -387,19 +408,10 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 //Add it to local and update the view
                 if (lastMessage != null) {
-                    ChatItem item = new ChatItem();
-                    item.setId(friendId);
-                    item.setSelf(false);
                     String text=lastMessage.child("text").getValue().toString();
-                    item.setText(text);
-                    item.setImage(friendPic);
                     long date=new Long(lastMessage.child("date").getValue().toString());
-                    item.setDate(date);
-                    chatListAdapter.addItem(item);
-
+                    addDataToList(text,false,date);
                     haveNewMessage=true;
-                    //update the view
-                    updateListView();
 
                     //delete it from unread message
                     deleteUnreadMessage();
@@ -413,7 +425,8 @@ public class ChatActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        mDatabaseRef.child("message").child(userId).child("history").child(friendId).addValueEventListener(userHistoryListener);
     }
 
     public void addToReceiver(String text,Long date) {

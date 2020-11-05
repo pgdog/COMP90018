@@ -14,6 +14,7 @@ import com.example.comp90018.R;
 import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.dataBean.User;
 import com.example.comp90018.utils.DataManager;
+import com.example.comp90018.utils.FirebaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -58,6 +59,9 @@ public class MainViewActivity extends AppCompatActivity {
 
     private int currentFragmentId;
 
+    //Listener
+    private ValueEventListener unreadMessageListener;
+
 
     public static final int REQUEST_CODE_FROM_MESSAGE_TO_CHAT = 1;
     public static final int REQUEST_CODE_FROM_FRIEND_TO_SEARCH=2;
@@ -70,6 +74,8 @@ public class MainViewActivity extends AppCompatActivity {
     public static final int RESULT_CODE_FROM_NEW_FRIEND_REQUEST_CHANGED=41;
     public static final int RESULT_CODE_FROM_NEW_FRIEND_FRIEND_CHANGED=42;
 
+    public static boolean isLocalFriendChanged=false;
+    public static boolean isLocalRequestChanged=false;
 
 
     //Data
@@ -178,8 +184,6 @@ public class MainViewActivity extends AppCompatActivity {
         friendsBadge = LayoutInflater.from(this).inflate(R.layout.menu_badge, menuView, false);
         messageTab.addView(messageBadge);
         friendsTab.addView(friendsBadge);
-
-        showFriendsBadge(DataManager.getDataManager(this).getNewFriendItems().size());
     }
 
     public void hideAllFragment(FragmentTransaction fragmentTransaction) {
@@ -242,7 +246,7 @@ public class MainViewActivity extends AppCompatActivity {
 
     public void listenMessageDataChanged() {
         //Listen to the unread message changed
-        databaseReference.child("message").child(dataManager.getUser().getID()).child("unread").addValueEventListener(new ValueEventListener() {
+        FirebaseManager.getFirebaseManager().setUnreadMessageNumListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //get all unread message
@@ -258,11 +262,12 @@ public class MainViewActivity extends AppCompatActivity {
 
             }
         });
+        databaseReference.child("message").child(dataManager.getUser().getID()).child("unread").addValueEventListener(FirebaseManager.getFirebaseManager().getUnreadMessageNumListener());
     }
 
     public void listenRequestDataChanged() {
         //Listen to the request changed
-        databaseReference.child("request").child(dataManager.getUser().getID()).addValueEventListener(new ValueEventListener() {
+        FirebaseManager.getFirebaseManager().setFriendRequestNumListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (dataManager.isLocalRequestChanged()) {
@@ -275,32 +280,7 @@ public class MainViewActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapShot : snapshot.getChildren()) {
                     requestIds.add((String) postSnapShot.getValue());
                 }
-
-                //Get the information of user whose id is in requests
-                databaseReference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<NewFriendItem> friendRequests = new ArrayList<NewFriendItem>();
-                        for (DataSnapshot postSnapShot : snapshot.getChildren()) {
-                            //if uid of this user appear in the friendRequestUid arraylist,
-                            //then add all related info into friendRequests
-                            if (requestIds.contains((String) postSnapShot.child("uid").getValue())) {
-                                NewFriendItem friendItem = new NewFriendItem();
-                                friendItem.setID((String) postSnapShot.child("uid").getValue());
-                                friendItem.setImage((String) postSnapShot.child("photo").getValue());
-                                friendItem.setName((String) postSnapShot.child("username").getValue());
-                                friendRequests.add(friendItem);
-                            }
-                        }
-                        dataManager.setNewFriendItems(friendRequests);
-                        showFriendsBadge(friendRequests.size());
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                showFriendsBadge(requestIds.size());
             }
 
             @Override
@@ -308,6 +288,7 @@ public class MainViewActivity extends AppCompatActivity {
 
             }
         });
+        databaseReference.child("request").child(dataManager.getUser().getID()).addValueEventListener(FirebaseManager.getFirebaseManager().getFriendRequestNumListener());
     }
 
     /**
@@ -316,16 +297,16 @@ public class MainViewActivity extends AppCompatActivity {
      * @param num the number of message unread
      */
     public void showMessageBadge(int num) {
-        TextView textView = messageTab.findViewById(R.id.badge_text);
+        TextView textView = messageBadge.findViewById(R.id.badge_text);
         if (num > 99) {
             textView.setText("99+");
+            messageBadge.setVisibility(View.VISIBLE);
         } else if (num == 0) {
-            textView.setVisibility(View.INVISIBLE);
+            messageBadge.setVisibility(View.INVISIBLE);
         } else {
             textView.setText(String.valueOf(num));
+            messageBadge.setVisibility(View.VISIBLE);
         }
-
-        messageBadge.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -370,6 +351,13 @@ public class MainViewActivity extends AppCompatActivity {
         }
         if(requestCode==REQUEST_CODE_FROM_FRIEND_TO_NEW_FRIEND && resultCode==RESULT_CODE_FROM_NEW_FRIEND_FRIEND_CHANGED){
             friendsFragment.updateListView();
+            isLocalFriendChanged=true;
+        }
+        if(requestCode==REQUEST_CODE_FROM_MESSAGE_TO_CHAT || requestCode==REQUEST_CODE_FROM_FRIEND_TO_PROFILE){
+            if(MessageFragment.unreadChanged){
+                messageFragment.updateListView();
+                MessageFragment.unreadChanged=false;
+            }
         }
     }
 }

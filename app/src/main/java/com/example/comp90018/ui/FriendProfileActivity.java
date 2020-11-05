@@ -36,6 +36,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     //data
     private String friendId;
+    private FriendItem friend;
 
     private boolean messageChanged=false;
 
@@ -72,7 +73,8 @@ public class FriendProfileActivity extends AppCompatActivity {
         sendMessageView=(LinearLayout)findViewById(R.id.friend_profile_chat);
         deleteFriendView=(LinearLayout)findViewById(R.id.friend_profile_delete_view);
 
-        final FriendItem friend=DataManager.getDataManager(this).getAFriend(friendId);
+        friend=DataManager.getDataManager(this).getAFriend(friendId);
+        Log.d("mwg","friend:"+friend.getID()+" friendpic:"+friend.getImage());
         Picasso.get().load(friend.getImage()).into(imageView);
 
         nameText.setText(friend.getName());
@@ -226,7 +228,7 @@ public class FriendProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
-                    if(dataSnapshot.child("from").equals(dataManager.getUser().getID())){
+                    if(dataSnapshot.child("from").getValue().toString().equals(dataManager.getUser().getID())){
                         dataSnapshot.getRef().setValue(null);
                     }
                 }
