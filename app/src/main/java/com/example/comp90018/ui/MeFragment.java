@@ -30,6 +30,7 @@ import com.example.comp90018.adapter.MeListAdapter;
 import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.MeItem;
 import com.example.comp90018.utils.DataManager;
+import com.example.comp90018.utils.FirebaseManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 import com.google.android.gms.tasks.Continuation;
@@ -122,6 +123,7 @@ public class MeFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 if(position == 1){
+                    FirebaseManager.getFirebaseManager().removeAllListener();
                     mAuth.signOut();
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);

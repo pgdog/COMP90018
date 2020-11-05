@@ -18,6 +18,7 @@ import com.example.comp90018.R;
 import com.example.comp90018.adapter.MessageListAdapter;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.utils.DataManager;
+import com.example.comp90018.utils.FirebaseManager;
 import com.example.comp90018.utils.OnRecycleItemClickListener;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +48,7 @@ public class MessageFragment extends Fragment {
 
     private boolean dataReady;
     private boolean viewReady;
+    public static boolean unreadChanged=false;
 
     public MessageFragment() {
         // Required empty public constructor
@@ -82,7 +84,7 @@ public class MessageFragment extends Fragment {
         dataManager=DataManager.getDataManager(getActivity());
         databaseReference=dataManager.getDatabaseReference();
         //get recent chat from firebase
-        databaseReference.child("chat").child(dataManager.getUser().getID()).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseManager.getFirebaseManager().setChatChangeListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //Get all recent chat
@@ -145,6 +147,7 @@ public class MessageFragment extends Fragment {
 
             }
         });
+        databaseReference.child("chat").child(dataManager.getUser().getID()).addValueEventListener(FirebaseManager.getFirebaseManager().getChatChangeListener());
     }
 
     public void initView(){
