@@ -7,11 +7,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -33,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
     //Views
@@ -40,8 +48,10 @@ public class ChatActivity extends AppCompatActivity {
     private Button backBtn;
     private RecyclerView recyclerView;
     private EditText inputText;
+    private Button audioBtn;
     private Button addBtn;
     private Button sendBtn;
+    private String friendId, userId;
 
     private String friendId, userId;
     private String friendPic;
@@ -50,6 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     DatabaseReference mDatabaseRef;
 
     ChatListAdapter chatListAdapter;
+    private SpeechRecognizer mSpeechRecognizer;
 
     private DataManager dataManager;
     private List<ChatItem> chatItems;
@@ -151,6 +162,7 @@ public class ChatActivity extends AppCompatActivity {
         backBtn = (Button) findViewById(R.id.chat_back_btn);
         recyclerView = (RecyclerView) findViewById(R.id.chat_recycler);
         inputText = (EditText) findViewById(R.id.chat_edit_text);
+        audioBtn = (Button) findViewById(R.id.chat_audio_btn);
         addBtn = (Button) findViewById(R.id.chat_add_btn);
         sendBtn = (Button) findViewById(R.id.chat_send_btn);
 
@@ -202,6 +214,23 @@ public class ChatActivity extends AppCompatActivity {
                     if (manager != null)
                         manager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
+            }
+        });
+
+        audioBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Toast.makeText(getApplicationContext(), "Hold to speak", Toast.LENGTH_SHORT).show();
+                        doSpeechRecognition();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        mSpeechRecognizer.destroy();
+                        break;
+                }
+                return true;
             }
         });
 
@@ -413,4 +442,97 @@ public class ChatActivity extends AppCompatActivity {
         mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("date").setValue(new Date(System.currentTimeMillis()).toString());
         mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("hasRead").setValue("0");
     }
+
+    public void doSpeechRecognition() {
+        this.mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        this.mSpeechRecognizer.setRecognitionListener(new mRecognitionListener());
+        Intent recognitionIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognitionIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        recognitionIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH.toString());
+        this.mSpeechRecognizer.startListening(recognitionIntent);
+    }
+
+    private class mRecognitionListener implements RecognitionListener {
+        @Override
+        public void onReadyForSpeech(Bundle params) {
+
+        }
+
+        @Override
+        public void onBeginningOfSpeech() {
+
+        }
+
+        @Override
+        public void onRmsChanged(float var) {
+
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer) {
+
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+
+        }
+
+        @Override
+        public void onError(int error) {
+            switch (error) {
+                case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                    Toast.makeText(getApplicationContext(), "Network Timeout", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK:
+                    Toast.makeText(getApplicationContext(), "Network Error", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_AUDIO:
+                    Toast.makeText(getApplicationContext(), "Audio Error", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_CLIENT:
+                    Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_SERVER:
+                    Toast.makeText(getApplicationContext(), "Server Error", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                    Toast.makeText(getApplicationContext(), "Didn't hear anything", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_NO_MATCH:
+                    Toast.makeText(getApplicationContext(), "No Match", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                    Toast.makeText(getApplicationContext(), "Recognition Service is on, please wait a sec.", Toast.LENGTH_SHORT).show();
+                    break;
+                case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                    Toast.makeText(getApplicationContext(), "No Permission", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void onResults(Bundle results) {
+            Log.i("result", "onResults");
+            ArrayList<String> partialResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            if (partialResults != null && partialResults.size() > 0) {
+                String bestResult = partialResults.get(0);
+                String origin = inputText.getText().toString();
+                inputText.setText(String.format("%s%s.", origin, bestResult));
+            }
+        }
+
+        @Override
+        public void onPartialResults(Bundle bundle) {
+
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params) {
+
+        }
+    }
+
 }
