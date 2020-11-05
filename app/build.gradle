@@ -49,5 +49,4 @@ dependencies {
     compileOnly 'com.google.android.wearable:wearable:2.5.0'
     //add picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
-
 }
