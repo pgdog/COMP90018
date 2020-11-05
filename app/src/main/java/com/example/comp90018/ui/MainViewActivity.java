@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.comp90018.MainActivity;
+import com.example.comp90018.MapsFragment;
 import com.example.comp90018.R;
 import com.example.comp90018.dataBean.NewFriendItem;
 import com.example.comp90018.dataBean.User;
@@ -45,7 +46,7 @@ public class MainViewActivity extends AppCompatActivity {
     private MessageFragment messageFragment;
     private FriendsFragment friendsFragment;
     private MeFragment meFragment;
-    private NearbyFragment nearbyFragment;
+    private MapsFragment nearbyFragment;
 
     //Some static value for transfer values between activitys
     public static final String VALUES_FRIEND_ID = "FriendID";
@@ -110,7 +111,7 @@ public class MainViewActivity extends AppCompatActivity {
             messageFragment = new MessageFragment();
             friendsFragment = new FriendsFragment();
             meFragment = new MeFragment();
-            nearbyFragment = new NearbyFragment();
+            nearbyFragment = new MapsFragment();
             //Default: go to the message fragment
             getSupportFragmentManager().beginTransaction().replace(R.id.myf, messageFragment).commitNow();
         }
