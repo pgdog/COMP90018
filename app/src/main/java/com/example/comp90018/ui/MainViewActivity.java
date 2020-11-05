@@ -299,11 +299,14 @@ public class MainViewActivity extends AppCompatActivity {
         TextView textView = messageBadge.findViewById(R.id.badge_text);
         if (num > 99) {
             textView.setText("99+");
+            textView.setVisibility(View.VISIBLE);
             messageBadge.setVisibility(View.VISIBLE);
         } else if (num == 0) {
+            textView.setVisibility(View.INVISIBLE);
             messageBadge.setVisibility(View.INVISIBLE);
         } else {
             textView.setText(String.valueOf(num));
+            textView.setVisibility(View.VISIBLE);
             messageBadge.setVisibility(View.VISIBLE);
         }
     }
@@ -317,11 +320,14 @@ public class MainViewActivity extends AppCompatActivity {
         TextView textView = friendsBadge.findViewById(R.id.badge_text);
         if (num > 99) {
             textView.setText("99+");
+            textView.setVisibility(View.VISIBLE);
             friendsBadge.setVisibility(View.VISIBLE);
         } else if (num == 0) {
+            textView.setVisibility(View.INVISIBLE);
             friendsBadge.setVisibility(View.INVISIBLE);
         } else {
             textView.setText(String.valueOf(num));
+            textView.setVisibility(View.VISIBLE);
             friendsBadge.setVisibility(View.VISIBLE);
         }
     }

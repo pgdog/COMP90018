@@ -368,6 +368,7 @@ public class ChatActivity extends AppCompatActivity {
             item.setImage(friendPic);
         }
         chatListAdapter.addItem(item);
+        recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
         return item;
     }
 
@@ -408,6 +409,9 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 //Add it to local and update the view
                 if (lastMessage != null) {
+                    if(lastMessage.child("text").getValue()==null || lastMessage.child("date").getValue()==null){
+                        return;
+                    }
                     String text=lastMessage.child("text").getValue().toString();
                     long date=new Long(lastMessage.child("date").getValue().toString());
                     addDataToList(text,false,date);
