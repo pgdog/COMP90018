@@ -53,7 +53,7 @@ public class ChatActivity extends AppCompatActivity {
     private Button sendBtn;
     private String friendId, userId;
 
-    private String friendId, userId;
+
     private String friendPic;
     private String friendName;
 
