@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:drawable="@color/color_item_selector">
+    android:background="@drawable/color_item_selector">
 
     <ImageView
         android:id="@+id/item_friend_image"

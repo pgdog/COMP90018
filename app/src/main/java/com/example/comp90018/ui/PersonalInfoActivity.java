@@ -1,6 +1,8 @@
 package com.example.comp90018.ui;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -10,11 +12,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.comp90018.R;
 import com.example.comp90018.utils.DataManager;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 public class PersonalInfoActivity extends AppCompatActivity {
@@ -30,6 +39,9 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
     public static int NAME_EDIT_REQUEST=1;
 
+    private Uri uploadUri;
+    private StorageReference mStorageRef;
+    private DataManager dataManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +54,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
         }
 
+        dataManager=DataManager.getDataManager(getApplicationContext());
         //Bind the layout
         setContentView(R.layout.activity_edit_info);
 
@@ -73,7 +86,10 @@ public class PersonalInfoActivity extends AppCompatActivity {
         imageEditView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent,MeFragment.PICK_IMAGE_REQUEST);
             }
         });
         imageEditView.setOnTouchListener(new View.OnTouchListener() {
@@ -115,11 +131,38 @@ public class PersonalInfoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==NAME_EDIT_REQUEST && requestCode== EditNameActivity.NAME_CHANGED_RESULT){
             isDataChanged=true;
             initView();
+        }
+        if(requestCode == MeFragment.PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null
+                && data.getData() != null){
+
+            uploadUri = data.getData();
+            mStorageRef = FirebaseStorage.getInstance().getReference("users").child(dataManager.getUser().getID()+".png");
+            mStorageRef.putFile(uploadUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if(!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    return mStorageRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+
+                        Uri downloadUri = task.getResult();
+                        dataManager.getDatabaseReference().child("users").child(dataManager.getUser().getID()).child("photo").setValue(downloadUri.toString());
+                        dataManager.getUser().setImage(downloadUri.toString());
+                        isDataChanged=true;
+                        initView();
+                    }
+                }
+            });
         }
     }
 }

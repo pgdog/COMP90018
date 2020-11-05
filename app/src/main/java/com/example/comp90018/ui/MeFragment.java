@@ -130,11 +130,6 @@ public class MeFragment extends Fragment {
                     getActivity().finish();
                 }else if(position == 0){
 
-                }else if(position ==2){
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(intent,PICK_IMAGE_REQUEST);
                 }
             }
         });
@@ -150,35 +145,12 @@ public class MeFragment extends Fragment {
 
     public void testData(){
         meItems.add(new MeItem(R.drawable.ic_setting,"Settings",MeItem.ITEM_TYPE_SETTING));
-        meItems.add(new MeItem(R.drawable.ic_setting,"Logout",MeItem.ITEM_TYPE_LOGOUT));
-        meItems.add(new MeItem(R.drawable.ic_setting,"Change Photo",MeItem.ITEM_TYPE_CHANGEPHOTO));
+        meItems.add(new MeItem(R.drawable.ic_exit,"Logout",MeItem.ITEM_TYPE_LOGOUT));
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null
-                        && data.getData() != null){
-            uploadUri = data.getData();
-            mStorageRef = FirebaseStorage.getInstance().getReference("users").child(mAuth.getCurrentUser().getUid()+".png");
-            mStorageRef.putFile(uploadUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return mStorageRef.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        Uri downloadUri = task.getResult();
-                        mDatabaseRef.child("photo").setValue(downloadUri.toString());
-                    }
-                }
-            });
-        }
         if(requestCode==PERSONAL_INFO_REQUEST && resultCode==PersonalInfoActivity.PERSONAL_INFO_CHANGED_RESULT){
             initView();
         }

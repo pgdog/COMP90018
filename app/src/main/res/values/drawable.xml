@@ -1,0 +1,4 @@
+<resources>
+    <drawable name="item_pressed">#ECECEC</drawable>
+    <drawable name="item_unPressed">#ffffff</drawable>
+</resources>
