@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:visibility="invisible"
         android:id="@+id/badge_text"
         android:layout_width="20dp"
         android:layout_height="20dp"
