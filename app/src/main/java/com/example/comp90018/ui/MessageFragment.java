@@ -90,6 +90,9 @@ public class MessageFragment extends Fragment {
                 //Get all recent chat
                 List<MessageItem> messageItems=new ArrayList<MessageItem>();
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    if(dataSnapshot.child("date").getValue()==null || dataSnapshot.child("text").getValue()==null){
+                        return;
+                    }
                     MessageItem messageItem=new MessageItem();
                     String friendID=dataSnapshot.getKey();
                     long date=new Long(dataSnapshot.child("date").getValue().toString());
