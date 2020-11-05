@@ -14,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,32 +48,8 @@ public class MapsFragment extends Fragment {
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(final GoogleMap googleMap) {
-            mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users")
-                    .child(DataManager.getDataManager(getActivity()).getUser().getID()).child("position");
-            //get user's location from firebase when the map is ready
-            mDatabaseRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ArrayList<String> tmp = new ArrayList<String>();
-                    //store lat and lng in arraylist and use element in arraylist for creat LatLng object
-                    for (DataSnapshot postSnapShot : snapshot.getChildren()) {
-                        tmp.add((String)postSnapShot.getValue());
-                    }
-                    if(tmp.size() == 2){
-                        LatLng userPos = new LatLng(Double.valueOf(tmp.get(0)),Double.valueOf(tmp.get(1)));
-                        //store created Marker in datamanager for removing them later
-                        //if not remove previous marker of the user, there will be multiple markers when user change location
-                        if(DataManager.getDataManager(getActivity()).getUserMarker() != null) {
-                            DataManager.getDataManager(getActivity()).getUserMarker().remove();
-                        }
-                        DataManager.getDataManager(getActivity()).setMarker(googleMap.addMarker(new MarkerOptions().position(userPos).title("Your location")));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userPos));
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                }
-            });
+            renderUserLoction(googleMap);
+            renderFriendsLocation(googleMap);
         }
     };
 
@@ -135,5 +112,74 @@ public class MapsFragment extends Fragment {
         UserPosition userPos = new UserPosition(Double.toString(location.getLatitude()),Double.toString(location.getLongitude()));
         mDatabaseRef.child("users").child(DataManager.getDataManager(getActivity()).getUser().getID())
                 .child("position").setValue(userPos);
+    }
+
+    public void renderUserLoction(final GoogleMap googleMap){
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users")
+                .child(DataManager.getDataManager(getActivity()).getUser().getID()).child("position");
+        //get user's location from firebase when the map is ready
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<String> tmp = new ArrayList<String>();
+                //store lat and lng in arraylist and use element in arraylist for creat LatLng object
+                for (DataSnapshot postSnapShot : snapshot.getChildren()) {
+                    tmp.add((String)postSnapShot.getValue());
+                }
+                if(tmp.size() == 2){
+                    LatLng userPos = new LatLng(Double.valueOf(tmp.get(0)),Double.valueOf(tmp.get(1)));
+                    //store created Marker in datamanager for removing them later
+                    //if not remove previous marker of the user, there will be multiple markers when user change location
+                    if(DataManager.getDataManager(getActivity()).getUserMarker() != null) {
+                        DataManager.getDataManager(getActivity()).getUserMarker().remove();
+                    }
+                    DataManager.getDataManager(getActivity()).setMarker(googleMap.addMarker(new MarkerOptions().position(userPos).title("Your location")));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(userPos));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    public void renderFriendsLocation(final GoogleMap googleMap){
+
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users")
+                .child(DataManager.getDataManager(getActivity()).getUser().getID()).child("friends");
+        mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //obtain all friends of the current user
+                final ArrayList<String> friends = new ArrayList<String>();
+                for (DataSnapshot postSnapShot : snapshot.getChildren()) {
+                    friends.add((String)postSnapShot.getValue());
+                }
+                if(friends.size() > 0){
+                    for(String friendId : friends){
+                        //start rendering friends' location on the map
+                        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(friendId);
+                        mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                //skip friends that has no locatoin yet
+                                if(!TextUtils.isEmpty((String)snapshot.child("position").child("lat").getValue())){
+                                    LatLng friendPos = new LatLng(Double.valueOf((String)snapshot.child("position").child("lat").getValue()),
+                                            Double.valueOf((String)snapshot.child("position").child("lng").getValue()));
+                                    googleMap.addMarker(new MarkerOptions().position(friendPos).title((String)snapshot.child("username").getValue()));
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
+                    }
+                    mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users");
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 }
