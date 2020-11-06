@@ -86,13 +86,13 @@
                     android:background="@drawable/ic_audio_recognition" />
 
                 <Button
-                    android:id="@+id/chat_add_btn"
+                    android:id="@+id/chat_photo_btn"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginBottom="10dp"
-                    android:background="@drawable/ic_add_circle" />
+                    android:background="@drawable/ic_photo" />
 
                 <Button
                     android:id="@+id/chat_send_btn"
