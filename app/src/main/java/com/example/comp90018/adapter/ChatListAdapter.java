@@ -39,8 +39,8 @@ public class ChatListAdapter extends RecyclerView.Adapter {
     public static final int MARGIN_TEXT_TO_PARENT=180;
     public static final int MARGIN_TEXT_TO_IMAGE=25;
 
-    public static final int VIEW_HOLEDER_TYPE_SPACE=0;
-    public static final int VIEW_HOLEDER_TYPE_NORMAL=1;
+    public static final int VIEW_HOLEDER_TYPE_SELF=0;
+    public static final int VIEW_HOLEDER_TYPE_FRIEND=1;
 
     //The view for each item
     static class ViewHolder extends RecyclerView.ViewHolder{
@@ -72,14 +72,16 @@ public class ChatListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType==VIEW_HOLEDER_TYPE_NORMAL){
+        if(viewType==VIEW_HOLEDER_TYPE_FRIEND){
             View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat,parent,false);
             ViewHolder holder=new ViewHolder(view);
             return holder;
-        }else{
-            return null;
+        }else if(viewType==VIEW_HOLEDER_TYPE_SELF){
+            View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_self,parent,false);
+            ViewHolder holder=new ViewHolder(view);
+            return holder;
         }
-
+        return null;
     }
 
     @Override
@@ -94,39 +96,16 @@ public class ChatListAdapter extends RecyclerView.Adapter {
                 myHolder.timeText.setText(transformDate(item.getDate()));
                 myHolder.timeText.setVisibility(View.VISIBLE);
             }
-
-            if(item.isSelf()){
-                //Change the picture of the TextView
-                myHolder.chatText.setBackground(myHolder.chatText.getContext().getDrawable(R.drawable.chat_text_background_blue));
-                ConstraintLayout parentLayout=(ConstraintLayout) myHolder.imageAvatar.getParent();
-                ConstraintSet constraintSet=new ConstraintSet();
-                constraintSet.clone(parentLayout);
-                constraintSet.clear(R.id.item_chat_image,ConstraintSet.START);
-                constraintSet.clear(R.id.item_chat_text_layout,ConstraintSet.START);
-                constraintSet.clear(R.id.item_chat_text_layout,ConstraintSet.END);
-
-                constraintSet.connect(R.id.item_chat_image,ConstraintSet.END,ConstraintSet.PARENT_ID,ConstraintSet.END,MARGIN_TEXT_TO_IMAGE);
-
-                constraintSet.connect(R.id.item_chat_text_layout,ConstraintSet.START,ConstraintSet.PARENT_ID,constraintSet.START,MARGIN_TEXT_TO_PARENT);
-                constraintSet.connect(R.id.item_chat_text_layout,ConstraintSet.END,R.id.item_chat_image,constraintSet.START,MARGIN_TEXT_TO_IMAGE);
-                myHolder.chatLayout.setGravity(Gravity.END);
-                constraintSet.applyTo(parentLayout);
-            }else{
-                ConstraintLayout parentLayout=(ConstraintLayout) myHolder.imageAvatar.getParent();
-                ConstraintSet constraintSet=new ConstraintSet();
-                constraintSet.clone(parentLayout);
-
-                constraintSet.setMargin(R.id.item_chat_image,ConstraintSet.START,MARGIN_TEXT_TO_IMAGE);
-                constraintSet.setMargin(R.id.item_chat_text_layout,ConstraintSet.START,MARGIN_TEXT_TO_IMAGE);
-                constraintSet.setMargin(R.id.item_chat_text_layout,ConstraintSet.END,MARGIN_TEXT_TO_PARENT);
-                constraintSet.applyTo(parentLayout);
-            }
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return VIEW_HOLEDER_TYPE_NORMAL;
+        if(chatItems.get(position).isSelf()){
+            return VIEW_HOLEDER_TYPE_SELF;
+        }else{
+            return VIEW_HOLEDER_TYPE_FRIEND;
+        }
     }
 
     @Override

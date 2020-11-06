@@ -78,6 +78,7 @@ public class ChatActivity extends AppCompatActivity {
             getSupportActionBar().hide();
 
         }
+        
         //Bind the layout
         setContentView(R.layout.activity_chat);
 

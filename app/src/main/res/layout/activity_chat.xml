@@ -41,69 +41,70 @@
         android:background="@color/colorBottomNavBack"
         app:layout_constraintTop_toBottomOf="@id/chat_title"></ImageView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
 
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chat_recycler"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#E1E1E1"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView" />
 
-        <EditText
-            android:id="@+id/chat_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:gravity="start|top"
-            android:inputType="textMultiLine"
-            android:background="@color/colorWhite"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#E1E1E1"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/chat_audio_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/ic_audio_recognition" />
+                <EditText
+                    android:id="@+id/chat_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorWhite"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine" />
 
-        <Button
-            android:id="@+id/chat_add_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/ic_add_circle" />
+                <Button
+                    android:id="@+id/chat_audio_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/ic_audio_recognition" />
 
-        <Button
-            android:id="@+id/chat_send_btn"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:text="Send"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp"
-            android:enabled="false"></Button>
-    </LinearLayout>
+                <Button
+                    android:id="@+id/chat_add_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/ic_add_circle" />
+
+                <Button
+                    android:id="@+id/chat_send_btn"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:enabled="false"
+                    android:gravity="center"
+                    android:text="Send"></Button>
+            </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
