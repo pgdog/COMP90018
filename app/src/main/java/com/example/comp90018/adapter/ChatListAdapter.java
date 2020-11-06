@@ -126,9 +126,9 @@ public class ChatListAdapter extends RecyclerView.Adapter {
                     }
                 };
                 if(position<=chatItems.size()/2){
-                    Picasso.get().load(item.getText()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE).placeholder(R.drawable.pic_loading).error(R.drawable.pic_loading_failed).tag("Picture").priority(Picasso.Priority.LOW).into(myHolder.messagePic,callback );
+                    Picasso.get().load(item.getText()).placeholder(R.drawable.pic_loading).error(R.drawable.pic_loading_failed).tag("Picture").priority(Picasso.Priority.LOW).into(myHolder.messagePic,callback );
                 }else{
-                    Picasso.get().load(item.getText()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE).placeholder(R.drawable.pic_loading).error(R.drawable.pic_loading_failed).tag("Picture").priority(Picasso.Priority.HIGH).into(myHolder.messagePic,callback );
+                    Picasso.get().load(item.getText()).placeholder(R.drawable.pic_loading).error(R.drawable.pic_loading_failed).tag("Picture").priority(Picasso.Priority.HIGH).into(myHolder.messagePic,callback );
                 }
 
             }

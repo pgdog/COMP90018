@@ -80,8 +80,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private boolean isFirstListen=true;
     private boolean haveNewMessage=false;
-    private Uri uploadUri;
-
 
     public static final int REQUEST_CODE_PICK_PICTURE=1;
 
@@ -323,7 +321,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    public void sendPicture(final String url){
+    public void sendPicture(final Uri upLoadUri){
         //Check if the friend exist
         mDatabaseRef.child("users").child(userId).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -337,8 +335,27 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 if(friendFound){
                     haveNewMessage=true;
-                    ChatItem item=addDataToList(url, true,System.currentTimeMillis(),ChatItem.TYPE_PICTURE);
-                    addToReceiver(url,item.getDate(),ChatItem.TYPE_PICTURE);
+                    final ChatItem item=addDataToList(upLoadUri.toString(), true,System.currentTimeMillis(),ChatItem.TYPE_PICTURE);
+                    Long currentDate=System.currentTimeMillis();
+                    mStorageRef = FirebaseStorage.getInstance().getReference("recordsPic").child(userId+"_"+currentDate+".png");
+                    mStorageRef.putFile(upLoadUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if(!task.isSuccessful()){
+                                throw task.getException();
+                            }
+                            return mStorageRef.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        addToReceiver(downloadUri.toString(),item.getDate(),ChatItem.TYPE_PICTURE);
+                    }
+                        }
+                    });
+
                     addToRencentChatList("[Picture]",item.getDate());
                     addToFirebaseRencentChat("[Picture]",item.getDate());
                 }else{
@@ -615,27 +632,9 @@ public class ChatActivity extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == Activity.RESULT_OK && data != null
                 && data.getData() != null){
 
-            uploadUri = data.getData();
-            sendPicture(uploadUri.toString());
-            Long currentDate=System.currentTimeMillis();
-            mStorageRef = FirebaseStorage.getInstance().getReference("recordsPic").child(userId+"_"+currentDate+".png");
-            mStorageRef.putFile(uploadUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return mStorageRef.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-//                    if(task.isSuccessful()){
-//                        Uri downloadUri = task.getResult();
-//                        sendPicture(downloadUri.toString());
-//                    }
-                }
-            });
+            Uri uploadUri = data.getData();
+            sendPicture(uploadUri);
+
         }
     }
 }
