@@ -19,15 +19,29 @@ public class ChatItem {
     private boolean isSelf;
     //The time millis of a message record, used for sort
     private long date;
+    //The type of the message
+    private int messageType;
+
+    public static final int TYPE_TEXT=1;
+    public static final int TYPE_PICTURE=2;
 
     public ChatItem(){}
 
-    public ChatItem(String id, String image, String text, boolean isSelf,long date){
+    public ChatItem(String id, String image, String text, boolean isSelf,long date,int messageType){
         this.id=id;
         this.image=image;
         this.text=text;
         this.isSelf=isSelf;
         this.date=date;
+        this.messageType=messageType;
+    }
+
+    public int getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(int messageType) {
+        this.messageType = messageType;
     }
 
     public void setImage(String image) {

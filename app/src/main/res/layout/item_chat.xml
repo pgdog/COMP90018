@@ -55,7 +55,17 @@
 
         </TextView>
 
-
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/item_chat_message_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:maxWidth="180dp"
+        android:background="@drawable/shape_corner"
+        app:layout_constraintStart_toEndOf="@+id/item_chat_image"
+        app:layout_constraintTop_toTopOf="@+id/item_chat_image"
+        android:layout_marginLeft="15dp"></ImageView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

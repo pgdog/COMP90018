@@ -1,5 +1,6 @@
 package com.example.comp90018.adapter;
 
+import android.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,9 @@ import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.R;
 import com.example.comp90018.utils.DataManager;
 import com.example.comp90018.utils.RecycleItemTouchHelper;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -48,22 +52,17 @@ public class ChatListAdapter extends RecyclerView.Adapter {
         TextView chatText;
         RelativeLayout chatLayout;
         TextView timeText;
+        ImageView messagePic;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageAvatar=(ImageView)itemView.findViewById(R.id.item_chat_image);
             chatText=(TextView)itemView.findViewById(R.id.item_chat_text);
             chatLayout=(RelativeLayout)itemView.findViewById(R.id.item_chat_text_layout);
             timeText=(TextView)itemView.findViewById(R.id.item_chat_time_text);
+            messagePic=(ImageView)itemView.findViewById(R.id.item_chat_message_pic);
         }
     }
 
-    private class SpaceViewHolder extends RecyclerView.ViewHolder{
-        Space space;
-        public SpaceViewHolder(View view){
-            super(view);
-            space=view.findViewById(R.id.item_space);
-        }
-    }
 
     public ChatListAdapter(List<ChatItem> chatItems){
         this.chatItems=chatItems;
@@ -88,10 +87,52 @@ public class ChatListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         //Bind the data
         if(position<chatItems.size()){
-            ChatItem item=chatItems.get(position);
-            ViewHolder myHolder=(ViewHolder)holder;
+            final ChatItem item=chatItems.get(position);
+            final ViewHolder myHolder=(ViewHolder)holder;
             Picasso.get().load(item.getImage()).into(myHolder.imageAvatar);
-            myHolder.chatText.setText(item.getText());
+            if(item.getMessageType()==ChatItem.TYPE_TEXT){
+                myHolder.chatText.setVisibility(View.VISIBLE);
+                myHolder.chatText.setText(item.getText());
+                myHolder.messagePic.setVisibility(View.GONE);
+            }else if(item.getMessageType()==ChatItem.TYPE_PICTURE){
+                myHolder.chatText.setVisibility(View.GONE);
+                myHolder.messagePic.setVisibility(View.VISIBLE);
+                Callback callback=new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        myHolder.messagePic.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                View largeImageView=LayoutInflater.from(view.getContext()).inflate(R.layout.large_image_layout,null);
+                                final AlertDialog dialog = new AlertDialog.Builder(view.getContext()).create();
+                                ImageView imageView=largeImageView.findViewById(R.id.large_imageView);
+                                Picasso.get().load(item.getText()).into(imageView);
+                                dialog.setView(largeImageView);
+                                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                                dialog.show();
+                                largeImageView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialog.cancel();
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                };
+                if(position<=chatItems.size()/2){
+                    Picasso.get().load(item.getText()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE).placeholder(R.drawable.pic_loading).error(R.drawable.pic_loading_failed).tag("Picture").priority(Picasso.Priority.LOW).into(myHolder.messagePic,callback );
+                }else{
+                    Picasso.get().load(item.getText()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE).placeholder(R.drawable.pic_loading).error(R.drawable.pic_loading_failed).tag("Picture").priority(Picasso.Priority.HIGH).into(myHolder.messagePic,callback );
+                }
+
+            }
+
             if(timeNeeded(chatItems,position)){
                 myHolder.timeText.setText(transformDate(item.getDate()));
                 myHolder.timeText.setVisibility(View.VISIBLE);

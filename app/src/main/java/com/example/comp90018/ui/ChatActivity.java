@@ -1,15 +1,18 @@
 package com.example.comp90018.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.speech.RecognitionListener;
@@ -32,10 +35,17 @@ import com.example.comp90018.dataBean.ChatItem;
 import com.example.comp90018.dataBean.MessageItem;
 import com.example.comp90018.utils.DataManager;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +59,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private EditText inputText;
     private Button audioBtn;
-    private Button addBtn;
+    private Button photoBtn;
     private Button sendBtn;
     private String friendId, userId;
 
@@ -62,12 +72,18 @@ public class ChatActivity extends AppCompatActivity {
     private SpeechRecognizer mSpeechRecognizer;
 
     private DataManager dataManager;
+    private StorageReference mStorageRef;
+
     private List<ChatItem> chatItems;
 
     private ValueEventListener userHistoryListener;
 
     private boolean isFirstListen=true;
     private boolean haveNewMessage=false;
+    private Uri uploadUri;
+
+
+    public static final int REQUEST_CODE_PICK_PICTURE=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +136,7 @@ public class ChatActivity extends AppCompatActivity {
                     item.setText(dataSnapshot.child("text").getValue().toString());
                     item.setImage(friendPic);
                     item.setDate(new Long(dataSnapshot.child("date").getValue().toString()));
+                    item.setMessageType(Integer.parseInt(dataSnapshot.child("type").getValue().toString()));
                     chatItems.add(item);
                 }
 
@@ -135,6 +152,7 @@ public class ChatActivity extends AppCompatActivity {
                             item.setText(dataSnapshot.child("text").getValue().toString());
                             item.setImage(dataManager.getUser().getImage());
                             item.setDate(new Long(dataSnapshot.child("date").getValue().toString()));
+                            item.setMessageType(Integer.parseInt(dataSnapshot.child("type").getValue().toString()));
                             chatItems.add(item);
                         }
                         dataManager.setChatItems(chatItems);
@@ -170,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.chat_recycler);
         inputText = (EditText) findViewById(R.id.chat_edit_text);
         audioBtn = (Button) findViewById(R.id.chat_audio_btn);
-        addBtn = (Button) findViewById(R.id.chat_add_btn);
+        photoBtn = (Button) findViewById(R.id.chat_photo_btn);
         sendBtn = (Button) findViewById(R.id.chat_send_btn);
 
         titleText.setText(friendName);
@@ -179,7 +197,16 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
-
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if(newState==RecyclerView.SCROLL_STATE_IDLE){
+                    Picasso.get().resumeTag("Picture");
+                }else{
+                    Picasso.get().pauseTag("Picture");
+                }
+            }
+        });
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,6 +215,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 mDatabaseRef.child("message").child(userId).child("history").child(friendId).removeEventListener(userHistoryListener);
                 userHistoryListener=null;
+                Picasso.get().cancelTag("Picture");
                 finish();
             }
         });
@@ -242,7 +270,15 @@ public class ChatActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+        photoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent,MeFragment.PICK_IMAGE_REQUEST);
+            }
+        });
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,8 +297,8 @@ public class ChatActivity extends AppCompatActivity {
                         if(friendFound){
                             haveNewMessage=true;
                             String text = inputText.getText().toString();
-                            ChatItem item=addDataToList(text, true,System.currentTimeMillis());
-                            addToReceiver(text,item.getDate());
+                            ChatItem item=addDataToList(text, true,System.currentTimeMillis(),ChatItem.TYPE_TEXT);
+                            addToReceiver(text,item.getDate(),ChatItem.TYPE_TEXT);
                             addToRencentChatList(text,item.getDate());
                             addToFirebaseRencentChat(text,item.getDate());
                             Log.i("test date", "date is " + new Date(System.currentTimeMillis()));
@@ -282,6 +318,37 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
                 });
+
+            }
+        });
+    }
+
+    public void sendPicture(final String url){
+        //Check if the friend exist
+        mDatabaseRef.child("users").child(userId).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean friendFound=false;
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    if(dataSnapshot.getValue().toString().equals(friendId)){
+                        friendFound=true;
+                        break;
+                    }
+                }
+                if(friendFound){
+                    haveNewMessage=true;
+                    ChatItem item=addDataToList(url, true,System.currentTimeMillis(),ChatItem.TYPE_PICTURE);
+                    addToReceiver(url,item.getDate(),ChatItem.TYPE_PICTURE);
+                    addToRencentChatList("[Picture]",item.getDate());
+                    addToFirebaseRencentChat("[Picture]",item.getDate());
+                }else{
+                    Toast.makeText(getApplicationContext(), "This user is not your friend, can't send message to him.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
@@ -353,10 +420,11 @@ public class ChatActivity extends AppCompatActivity {
      * @param isSelf whether the text is from the user
      * @return the data of ChatItem
      */
-    public ChatItem addDataToList(String text, boolean isSelf,Long date) {
+    public ChatItem addDataToList(String text, boolean isSelf,Long date,int messageType) {
         ChatItem item = new ChatItem();
         item.setText(text);
         item.setSelf(isSelf);
+        item.setMessageType(messageType);
 
         item.setDate(date);
         if (isSelf) {
@@ -410,12 +478,13 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 //Add it to local and update the view
                 if (lastMessage != null) {
-                    if(lastMessage.child("text").getValue()==null || lastMessage.child("date").getValue()==null){
+                    if(lastMessage.child("text").getValue()==null || lastMessage.child("date").getValue()==null || lastMessage.child("type")==null){
                         return;
                     }
                     String text=lastMessage.child("text").getValue().toString();
                     long date=new Long(lastMessage.child("date").getValue().toString());
-                    addDataToList(text,false,date);
+                    int messageType=Integer.parseInt(lastMessage.child("type").getValue().toString());
+                    addDataToList(text,false,date,messageType);
                     haveNewMessage=true;
 
                     //delete it from unread message
@@ -434,32 +503,19 @@ public class ChatActivity extends AppCompatActivity {
         mDatabaseRef.child("message").child(userId).child("history").child(friendId).addValueEventListener(userHistoryListener);
     }
 
-    public void addToReceiver(String text,Long date) {
+    public void addToReceiver(String text,Long date,int messageType) {
         String unReadKey = mDatabaseRef.child("message").child(friendId).child("unread").push().getKey();
         mDatabaseRef.child("message").child(friendId).child("unread").child(unReadKey).child("text").setValue(text);
         mDatabaseRef.child("message").child(friendId).child("unread").child(unReadKey).child("from").setValue(userId);
         mDatabaseRef.child("message").child(friendId).child("unread").child(unReadKey).child("date").setValue(String.valueOf(date));
+        mDatabaseRef.child("message").child(friendId).child("unread").child(unReadKey).child("type").setValue(String.valueOf(messageType));
 
         String historyKey = mDatabaseRef.child("message").child(friendId).child("history").child(userId).push().getKey();
         mDatabaseRef.child("message").child(friendId).child("history").child(userId).child(historyKey).child("text").setValue(text);
         mDatabaseRef.child("message").child(friendId).child("history").child(userId).child(historyKey).child("date").setValue(String.valueOf(date));
+        mDatabaseRef.child("message").child(friendId).child("history").child(userId).child(historyKey).child("type").setValue(String.valueOf(messageType));
     }
 
-    public void addToSender(String text){
-        String key = mDatabaseRef.child("message").child(userId).child(friendId).push().getKey();
-        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("text").setValue(text);
-        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("uid").setValue(userId);
-        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("date").setValue(new Date(System.currentTimeMillis()).toString());
-        mDatabaseRef.child("message").child(userId).child(friendId).child(key).child("hasRead").setValue("0");
-    }
-
-    public void addToReceiver(String text){
-        String key = mDatabaseRef.child("message").child(friendId).child(userId).push().getKey();
-        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("text").setValue(text);
-        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("uid").setValue(userId);
-        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("date").setValue(new Date(System.currentTimeMillis()).toString());
-        mDatabaseRef.child("message").child(friendId).child(userId).child(key).child("hasRead").setValue("0");
-    }
 
     public void doSpeechRecognition() {
         this.mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
@@ -553,4 +609,33 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == Activity.RESULT_OK && data != null
+                && data.getData() != null){
+
+            uploadUri = data.getData();
+            sendPicture(uploadUri.toString());
+            Long currentDate=System.currentTimeMillis();
+            mStorageRef = FirebaseStorage.getInstance().getReference("recordsPic").child(userId+"_"+currentDate+".png");
+            mStorageRef.putFile(uploadUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if(!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    return mStorageRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+//                    if(task.isSuccessful()){
+//                        Uri downloadUri = task.getResult();
+//                        sendPicture(downloadUri.toString());
+//                    }
+                }
+            });
+        }
+    }
 }
