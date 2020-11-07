@@ -136,6 +136,9 @@ public class ChatListAdapter extends RecyclerView.Adapter {
             if(timeNeeded(chatItems,position)){
                 myHolder.timeText.setText(transformDate(item.getDate()));
                 myHolder.timeText.setVisibility(View.VISIBLE);
+            }else{
+                myHolder.timeText.setText("");
+                myHolder.timeText.setVisibility(View.INVISIBLE);
             }
         }
     }
