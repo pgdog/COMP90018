@@ -46,6 +46,11 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
+        if(!confirmPassword.getText().toString().equals(password.getText().toString())){
+            Toast.makeText(getApplicationContext(), "Please confirm the password.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         progressBar.setVisibility(View.VISIBLE);
         signBtn.setEnabled(false);
         signBtn.setText("please wait...");
