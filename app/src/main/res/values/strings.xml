@@ -1,7 +1,7 @@
 <resources>
     <string name="friend_request_title">New Friends</string>
-    <string name="friends_request_text">Friends Requests</string>
-    <string name="add_friend_title_hint">Input the email of an user</string>
+    <string name="friends_request_text">Friend Requests</string>
+    <string name="add_friend_title_hint">Input the email of a user</string>
     <string name="add_friend_title">Add Friends</string>
     <string name="nearby_title">Nearby</string>
     <string name="me_title">Me</string>
