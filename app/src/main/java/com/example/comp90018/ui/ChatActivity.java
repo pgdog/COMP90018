@@ -495,7 +495,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 //Add it to local and update the view
                 if (lastMessage != null) {
-                    if(lastMessage.child("text").getValue()==null || lastMessage.child("date").getValue()==null || lastMessage.child("type")==null){
+                    if(lastMessage.child("text").getValue()==null || lastMessage.child("date").getValue()==null || lastMessage.child("type").getValue()==null){
                         return;
                     }
                     String text=lastMessage.child("text").getValue().toString();
